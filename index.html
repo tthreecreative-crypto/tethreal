@@ -320,6 +320,8 @@ body.member .guest{display:none!important}body:not(.member) .member{display:none
  #liveReport .rp-bar{display:flex;align-items:center;gap:6px}#liveReport .rp-bar i{display:block;height:10px;border-radius:4px;background:#e70b4b;max-width:70%}
  #liveReport tr.tot td{font-weight:800;border-top:2px solid #111a33;border-bottom:0;background:#fff8d6}
  #liveReport .rp-foot{margin-top:18px;text-align:center;color:#8a93ad;font-size:9px}}
+.fmt{display:inline-block;font-size:12px;font-weight:700;padding:3px 8px;border-radius:999px;background:var(--bg2);color:var(--ink);white-space:nowrap}#v-konten .mhead{flex-wrap:wrap;gap:8px}
+.pfpick{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}.pfc{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);border-radius:999px;padding:7px 12px;font-size:14px;font-weight:600;cursor:pointer;user-select:none;min-height:38px}.pfc input{position:absolute;opacity:0;pointer-events:none}.pfc:has(input:checked){border-color:var(--c);background:var(--c);color:#fff}.pfc:has(input:checked) span::before{content:'✓ '}.pfc:has(input:focus-visible){outline:2px solid var(--c);outline-offset:2px}.flbl{font-size:14px;font-weight:600}.pfs{display:inline-flex;gap:4px;flex-wrap:wrap}.accchip{display:inline-flex;align-items:center;gap:6px;background:var(--bg2);border-radius:999px;padding:6px 6px 6px 12px;font-weight:600;font-size:14px}.accchip button{border:0;background:none;color:var(--red);font-size:16px;cursor:pointer;width:28px;height:28px;border-radius:50%}
 </style>
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -442,8 +444,8 @@ body.member .guest{display:none!important}body:not(.member) .member{display:none
    <div class="cal" id="cal"></div><p class="note" style="font-size:12px;margin:8px 0 0">Sumber libur 2027: SKB 3 Menteri, 15 Sep 2026.</p></div>
   </section>
   <section id="v-konten" hidden>
-   <div class="panel"><div class="mhead" style="margin-bottom:10px"><input id="q" placeholder="Cari judul atau caption…" style="max-width:340px"><button class="btn ghost sm sp" data-open-ap>Link approval</button></div>
-   <div class="scroll"><table class="stack"><thead><tr><th>Tanggal</th><th>Judul</th><th>Platform</th><th>Pilar</th><th>Status</th></tr></thead><tbody id="tbody"></tbody></table></div></div>
+   <div class="panel"><div class="mhead" style="margin-bottom:10px"><input id="q" placeholder="Cari judul, caption, atau akun…" style="max-width:340px"><select id="qAcc" aria-label="Filter akun" style="width:auto" hidden></select><select id="qFmt" aria-label="Filter format" style="width:auto"><option value="">Semua format</option><option value="reels">Reels</option><option value="poster">Poster</option><option value="carousel">Carousel</option><option value="none">Belum diisi</option></select><button class="btn ghost sm sp" data-open-ap>Link approval</button></div>
+   <div class="scroll"><table class="stack"><thead><tr><th>Tanggal</th><th>Judul</th><th>Akun</th><th>Platform</th><th>Format</th><th>Pilar</th><th>Status</th></tr></thead><tbody id="tbody"></tbody></table></div></div>
   </section>
   <section id="v-kanban" hidden><div class="kan" id="kan"></div><p class="note"><span class="hint-fine">Seret kartu antar kolom untuk mengubah status.</span><span class="hint-touch">Ketuk kartu untuk mengubah status atau jadwalnya.</span></p></section>
   <section id="v-analytics" hidden>
@@ -473,7 +475,7 @@ body.member .guest{display:none!important}body:not(.member) .member{display:none
    </div>
   </section>
   <section id="v-performa" hidden>
-   <div class="panel"><div class="mhead" style="align-items:center;margin-bottom:12px"><div class="chips" id="pfMode"><button class="chip" data-pm="month">Bulan</button><button class="chip" data-pm="90">90 hari</button><button class="chip" data-pm="all">Semua</button></div><div class="chips sp" id="pfPf"></div></div>
+   <div class="panel"><div class="mhead" style="align-items:center;margin-bottom:12px"><div class="chips" id="pfMode"><button class="chip" data-pm="month">Bulan</button><button class="chip" data-pm="90">90 hari</button><button class="chip" data-pm="all">Semua</button></div><div class="chips sp" id="pfPf"></div><select id="pfAcc" aria-label="Filter akun" data-nt style="width:auto" hidden></select></div>
     <div class="lvnav" id="pfNav"><button class="btn ghost sm" id="pfPrev" aria-label="Sebelumnya">‹</button><div><h3 id="pfLabel" style="margin:0"></h3><span class="note" id="pfSub"></span></div><button class="btn ghost sm" id="pfNext" aria-label="Berikutnya">›</button></div></div>
    <div class="kpis" id="pfKpis" style="margin-top:18px"></div>
    <div class="panel" style="margin-top:18px"><div class="mhead" style="margin-bottom:6px"><h3 style="margin:0">Rekap postingan</h3><span class="note sp" id="pfCount" data-nt></span></div>
@@ -484,16 +486,16 @@ body.member .guest{display:none!important}body:not(.member) .member{display:none
   </section>
   <section id="v-bulanan" hidden>
    <div class="panel"><h3>Report bulanan gabungan</h3>
-    <div class="igrow"><label>Judul<input id="mbTitle" maxlength="60" autocomplete="off"></label><label>Dari<input type="date" id="mbStart"></label><label>Sampai<input type="date" id="mbEnd"></label><label>Bahasa report<select id="mbLang"><option value="en">English</option><option value="id">Indonesia</option></select></label></div>
+    <div class="igrow"><label>Judul<input id="mbTitle" maxlength="60" autocomplete="off"></label><label>Dari<input type="date" id="mbStart"></label><label>Sampai<input type="date" id="mbEnd"></label><label>Bahasa report<select id="mbLang"><option value="en">English</option><option value="id">Indonesia</option></select></label><label>Akun<select id="mbAcc" data-nt></select></label></div>
     <h3 style="margin-top:18px">Isi report</h3><p class="note" style="margin-top:0">Pilih bagian yang mau dimasukkan. Report Instagram dan TikTok dipilih otomatis berdasarkan periode, atau pilih sendiri dari daftar.</p><div id="mbSecs" class="mbsecs"></div></div>
    <div class="panel" style="margin-top:18px"><div class="mhead" style="margin-bottom:12px;align-items:center"><h3 style="margin:0">Preview</h3><span class="note sp" id="mbInfo" data-nt></span><button class="btn sm" id="mbPdf">Unduh PDF</button></div><div id="mbPrev" style="display:grid;gap:14px"></div></div>
   </section>
   <section id="v-igreport" hidden>
    <div class="igl">
-    <div class="panel" style="align-self:start"><h3 id="igTitle">Report Instagram</h3><button class="btn sm" id="igNew" style="width:100%;margin-bottom:12px">+ Report baru</button><div id="igList" style="display:grid;gap:8px"></div><p class="note" style="font-size:12px;margin-bottom:0">Report tersimpan per akun yang dipilih di sidebar.</p></div>
+    <div class="panel" style="align-self:start"><h3 id="igTitle">Report Instagram</h3><button class="btn sm" id="igNew" style="width:100%;margin-bottom:12px">+ Report baru</button><select id="igAccF" aria-label="Filter akun" data-nt hidden style="margin-bottom:10px"></select><div id="igList" style="display:grid;gap:8px"></div><p class="note" style="font-size:12px;margin-bottom:0">Report tersimpan per akun yang dipilih di sidebar.</p></div>
     <div id="igEd" hidden>
      <div class="panel"><h3>1. Akun & periode</h3><div class="igrow">
-      <label>Username<input id="igHandle" placeholder="namaakun" maxlength="60" autocomplete="off"></label><label>Dari<input type="date" id="igStart"></label><label>Sampai<input type="date" id="igEnd"></label>
+      <label>Akun<select id="igHandle" data-nt></select></label><label>Dari<input type="date" id="igStart"></label><label>Sampai<input type="date" id="igEnd"></label>
       <label>Bahasa report<select id="igLang"><option value="en">English</option><option value="id">Indonesia</option></select></label><label>Warna<input type="color" id="igColor"></label>
       <div class="iglogo"><span>Logo</span><div><span id="igLogoPrev"></span><label class="btn ghost sm">Upload logo<input type="file" id="igLogo" accept="image/png,image/jpeg" hidden></label><button type="button" class="chip" id="igLogoRm" aria-label="Hapus logo" title="Hapus logo" hidden>×</button></div></div></div></div>
      <div class="panel"><h3>2. Screenshot Insights</h3><label class="dropzone"><input type="file" id="igFiles" accept="image/*" multiple hidden><strong>Upload screenshot Insights</strong><span class="note">Angka dibaca otomatis dari screenshot. Bisa pilih beberapa sekaligus.</span></label>
@@ -537,6 +539,7 @@ body.member .guest{display:none!important}body:not(.member) .member{display:none
      <form class="lform" id="tmInvite"><label>Email anggota<input type="email" id="tmEmail" required autocomplete="off"></label><button class="btn sm" style="justify-self:start">Undang</button><p class="lmsg" id="tmMsg" role="status"></p><button type="button" class="btn ghost sm" id="tmCopy" hidden style="justify-self:start">Salin pesan undangan</button></form></div>
    </div>
    <div class="panel" style="margin-top:18px"><h3>Anggota tim</h3><div class="scroll"><table class="stack"><thead><tr><th>Nama</th><th>Email</th><th>Peran</th><th>Aksi</th></tr></thead><tbody id="tmMembers"></tbody></table></div></div>
+   <div class="panel" style="margin-top:18px"><h3>Akun media sosial</h3><p class="note" style="margin-top:0">Daftar akun yang muncul di pilihan "Akun" saat membuat konten dan di Report Instagram / TikTok. Berlaku untuk semua anggota workspace ini.</p><form id="accForm" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"><input id="accName" maxlength="60" placeholder="mis. @eliterecruitment.id" autocomplete="off" style="flex:1 1 220px;max-width:340px"><button class="btn sm">Tambah akun</button></form><div id="accList2" style="display:flex;gap:8px;flex-wrap:wrap"></div></div>
    <div class="panel" style="margin-top:18px"><h3>Aktivitas tim</h3><div id="tmAct"></div></div>
   </section>
   <section id="v-pengguna" hidden>
@@ -549,10 +552,12 @@ body.member .guest{display:none!important}body:not(.member) .member{display:none
 <dialog id="dlg"><form class="dlg" id="frm">
  <h3 id="dlgT">Konten baru</h3>
  <label>Judul<input id="fTitle" required maxlength="90"></label>
- <div class="f2"><label>Platform<select id="fPf"></select></label><label>Status<select id="fSt"></select></label></div>
+ <div class="f2"><label>Status<select id="fSt"></select></label><label>Format<select id="fFmt"><option value="reels">Reels</option><option value="poster">Poster</option><option value="carousel">Carousel</option><option value="">Belum diisi</option></select></label></div>
+ <div><span class="flbl">Platform <small class="note">(bisa pilih lebih dari satu)</small></span><div id="fPfs" class="pfpick"></div></div>
+ <label>Akun<select id="fAcc" data-nt></select></label>
  <div class="f2"><label>Tanggal tayang<input type="date" id="fDate" required></label><label>Jam<input type="time" id="fTime" value="19:00"></label></div>
  <div id="fAppr" class="appr" hidden></div>
- <label>Pilar konten<select id="fPil"><option>Edukasi</option><option>Hiburan</option><option>Promo</option><option>Behind the scene</option><option>Testimoni</option></select></label>
+ <label>Pilar konten<select id="fPil"><option value="Edukasi">Edukasi</option><option value="Hiburan">Hiburan</option><option value="Promo">Promo</option><option value="Behind the scene">Behind the scene</option><option value="Testimoni">Testimoni</option></select></label>
  <label>Caption / script<textarea id="fCap" rows="5"></textarea></label>
  <label>Link postingan<input id="fUrl" inputmode="url" placeholder="https://www.instagram.com/p/…" maxlength="400" autocomplete="off"></label>
  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><select id="fTpl" data-nt aria-label="Pakai template" style="width:auto;min-width:180px;flex:1 1 180px"></select><button type="button" class="btn ghost sm" id="cpCap">Salin caption</button><span class="note" id="capMsg"></span></div>
