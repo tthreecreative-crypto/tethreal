@@ -198,10 +198,10 @@ function applyRemote(d){if(anyOpen()){pendingRemote=d;return}S=norm(d);if(!S.bra
 function save(skipDrive){S.updated=Date.now();if(!skipDrive)scheduleDrive();try{localStorage.setItem(cacheKey(),JSON.stringify(S))}catch(e){}
  if(!sb||!me)return;clearTimeout(tmr);setSync('Menyimpan…');tmr=setTimeout(flush,800)}
 async function flush(){if(saving){dirty=true;return}saving=true;tmr=null;
- let err=null;if(WS)err=await pushItems();const r=await savePersonal();
+ let err=null;if(WS&&!wsBusy)err=await pushItems();const r=await savePersonal();
  setSync(err||(r&&r.error)?'Gagal menyimpan ke server · tersimpan di perangkat ini':'Tersimpan di server');
  saving=false;if(dirty){dirty=false;flush()}}
-async function loadData(){const {data,error}=await sb.from('planner').select('data').eq('user_id',me.id).maybeSingle();
+async function loadData(){if(WS&&(tmr||dirty)){clearTimeout(tmr);tmr=null;await flush()}WS=null;synced=new Map();const {data,error}=await sb.from('planner').select('data').eq('user_id',me.id).maybeSingle();
  const personal=(data&&data.data)||{};legacy=personal.legacy||null;S=norm(personal);if(!S.integ)S.integ={};
  if(error){setSync('Server tidak terjangkau · memakai data di perangkat ini');brand=S.order[0];fillBrands();render();return}
  await wsInit(personal)}
@@ -238,7 +238,7 @@ async function gate(){if(!sb){showLogin();lmsg('config.js belum diisi. Lihat REA
 function showPublic(){const h=location.hash.slice(1);const auth=h==='masuk'||h==='daftar'||!$('waitBox').hidden||!$('fReset').hidden;
  $('landing').hidden=auth;$('site').hidden=!auth;if(auth&&$('waitBox').hidden&&$('fReset').hidden)showForm(h==='daftar'?'up':'in');scrollHome(h)}
 function showLogin(){gated=false;setMember(false);document.body.classList.remove('inapp');$('authBox').hidden=false;$('waitBox').hidden=true;showPublic()}
-if(sb)sb.auth.onAuthStateChange((ev)=>{if(ev==='PASSWORD_RECOVERY'){showLogin();showForm('reset');$('landing').hidden=true;$('site').hidden=false;lmsg('Masukkan password baru Anda.');return}if((ev==='SIGNED_IN'&&!noGate)||ev==='SIGNED_OUT')setTimeout(gate,0)});
+if(sb)sb.auth.onAuthStateChange((ev,ses)=>{if(ev==='SIGNED_IN'&&gated&&me&&ses&&ses.user&&ses.user.id===me.id)return;if(ev==='PASSWORD_RECOVERY'){showLogin();showForm('reset');$('landing').hidden=true;$('site').hidden=false;lmsg('Masukkan password baru Anda.');return}if((ev==='SIGNED_IN'&&!noGate)||ev==='SIGNED_OUT')setTimeout(gate,0)});
 
 /* Admin: approve or reject accounts */
 async function loadUsers(){if(!profile||!profile.is_admin)return;$('admMsg').textContent='Memuat…';
@@ -579,7 +579,7 @@ $('fPass').onsubmit=async e=>{e.preventDefault();const cur=$('setPassCur').value
 VIEWS.push('tim');
 /* ---------- Workspace bersama ---------- */
 const CID=Math.random().toString(36).slice(2)+Date.now().toString(36);
-let WS=null,WSL=[],synced=new Map(),wsChan=null,legacy=null,lateRender=false,ACT=[];
+let wsBusy=false,WS=null,WSL=[],synced=new Map(),wsChan=null,legacy=null,lateRender=false,ACT=[];
 const ik=(k,key)=>k+'|'+key;
 const wsKey=()=>'planner-ws-'+(me?me.id:'none');
 function itemsFromS(){const m=new Map();
@@ -606,7 +606,7 @@ function stateFromRows(rows){const meta=rows.find(r=>r.kind==='meta'&&r.key==='o
  const keep=S.integ;S=norm(d);S.integ=keep||S.integ}
 function applyRow(r){if(!WS||r.workspace_id!==WS.id)return;if(r.client_id===CID)return;const k=ik(r.kind,r.key);const dead=r.deleted||!r.data;
  if(r.kind==='meta'&&r.key==='brandkit'){S.kit=norm({kit:dead?{}:r.data}).kit}
- else if(r.kind==='meta'){if(!dead&&Array.isArray(r.data.order)){const o=r.data.order.map(x=>String(x).slice(0,40)).filter(Boolean);const rest=S.order.filter(b=>!o.includes(b)&&((S.brands[b]||[]).length||((S.live||{})[b]||[]).length));S.order=[...o,...rest];S.order.forEach(ensureBrand)}}
+ else if(r.kind==='meta'){if(!dead&&Array.isArray(r.data.order)){const o=r.data.order.map(x=>String(x).slice(0,40)).filter(Boolean);const rest=S.order.filter(b=>!o.includes(b));S.order=[...o,...rest];S.order.forEach(ensureBrand)}}
  else if(r.kind==='post'){S.order.forEach(b=>{S.brands[b]=(S.brands[b]||[]).filter(p=>p.id!==r.key)});if(!dead){const b=ensureBrand(r.data.brand);const n=norm({order:[b],brands:{[b]:[{...r.data,id:r.key}]}});S.brands[b].push(n.brands[b][0])}}
  else if(r.kind==='live'){S.order.forEach(b=>{S.live[b]=(S.live[b]||[]).filter(x=>x.id!==r.key)});if(!dead){const b=ensureBrand(r.data.brand);const n=norm({order:[b],brands:{[b]:[]},live:{[b]:[{...r.data,id:r.key}]}});if(n.live[b][0])S.live[b].push(n.live[b][0])}}
  else if(r.kind==='goals'){ensureBrand(r.key);S.goals[r.key]=dead?[]:norm({order:[r.key],brands:{[r.key]:[]},goals:{[r.key]:r.data.list||[]}}).goals[r.key]}
@@ -634,7 +634,8 @@ async function wsInit(personal){try{await sb.rpc('accept_invites')}catch(e){}
   legacy=personal&&personal.brands?personal:legacy;await savePersonal();WSL=[WS]}
  let id=null;try{id=localStorage.getItem(wsKey())}catch(e){}
  if(!WSL.find(w=>w.id===id))id=WSL[0].id;await wsLoad(id)}
-async function wsLoad(id){if(typeof IGR!=='undefined'){IGR=null;igDirty=false;MB=null}WS=WSL.find(w=>w.id===id)||WSL[0];try{localStorage.setItem(wsKey(),WS.id)}catch(e){}fillWS();setSync('Memuat data…');
+async function wsLoad(id){if(WS&&(tmr||dirty)&&!wsBusy){clearTimeout(tmr);tmr=null;await flush()}wsBusy=true;try{await wsLoad0(id)}finally{wsBusy=false;dirty=false}}
+async function wsLoad0(id){if(typeof IGR!=='undefined'){IGR=null;igDirty=false;MB=null}WS=WSL.find(w=>w.id===id)||WSL[0];try{localStorage.setItem(wsKey(),WS.id)}catch(e){}fillWS();setSync('Memuat data…');
  let rows;try{rows=await fetchRows(WS.id)}catch(e){setSync('Server tidak terjangkau · memakai data di perangkat ini');return}
  stateFromRows(rows);resync();brand=S.order[0];try{const b=localStorage.getItem(cacheKey()+'-brand');if(b&&S.brands[b])brand=b}catch(e){}
  if(wsChan){try{sb.removeChannel(wsChan)}catch(e){}}
