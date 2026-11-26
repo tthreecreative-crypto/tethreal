@@ -1188,7 +1188,7 @@ const PFK={ig:['views','reach','likes','comments','shares','saves','follows'],tt
 const pfKeys=pf=>PFK[pf]||['views','likes','comments','shares'];
 const PFL={views:['Views','Views'],reach:['Jangkauan','Reach'],likes:['Likes','Likes'],comments:['Komentar','Comments'],shares:['Bagikan','Shares'],saves:['Simpan','Saves'],follows:['Follow','Follows']};
 const PFST={};let PM={mode:'month',anchor:new Date(today.getFullYear(),today.getMonth(),1),pf:'all',acc:''},pfActive=null;
-function postParse(text){const L=String(text||'').replace(/ /g,' ').split(/\r?\n/).map(l=>l.trim().replace(/^(?:[^A-Za-z0-9\s]{1,3}|[A-Za-z]{1,2}|[^A-Za-z0-9\s][A-Za-z]?)\s+(?=[A-Za-z]{3,})/,'')).filter(Boolean);const low=L.map(l=>l.toLowerCase());const R={};
+function postParse(text){const L=String(text||'').replace(/ /g,' ').split(/\r?\n/).map(l=>l.trim().replace(/^[^\d\s]{1,3}\s+(?=[A-Za-z]{3,})/,'')).filter(Boolean);const low=L.map(l=>l.toLowerCase());const R={};
  const set=(k,v)=>{if(v!=null&&isFinite(v)&&R[k]===undefined)R[k]=Math.abs(v)};
  const find=(re,k,not)=>{for(let i=0;i<L.length;i++){if(!re.test(low[i])||(not&&not.test(low[i])))continue;const m=low[i].match(re);const tail=L[i].slice(m.index+m[0].length);let n=igNums(tail).filter(x=>!/%/.test(x.raw));
   if(!n.length&&i+1<L.length)n=igNums(L[i+1]).filter(x=>!/%/.test(x.raw));if(n.length){set(k,n[0].v);return}}};
@@ -1196,6 +1196,7 @@ function postParse(text){const L=String(text||'').replace(/ /g,' ').split(/\r?\
  find(/^(views|tayangan|plays|video views|post views|penayangan( video| postingan)?|diputar)\b/,'views',/content type|jenis konten|by|berdasarkan/);
  find(/^(likes|suka|disukai)\b/,'likes');find(/^(comments|komentar)\b/,'comments');find(/^(shares|dibagikan|bagikan|berbagi)\b/,'shares');
  find(/^(saves|disimpan|simpan|favorites|favorit)\b/,'saves');find(/^(follows|new followers|pengikut baru|mengikuti)\b/,'follows');
+ if(R.follows===undefined){const pi=low.findIndex(l=>/^(profil|profile|aktivitas profil|profile activity)\b/.test(l));if(pi>=0)for(let i=pi+1;i<L.length;i++){if(/^(pengikut|followers|follows|ikuti)\b/.test(low[i])){const n=igNums(L[i].replace(/^\S+\s*/,'')).filter(x=>!/%/.test(x.raw));if(n.length){set('follows',n[0].v);break}}}}
  if(R.likes===undefined){for(const l of L){const t=l.replace(/[^\d.,KkMm+\s-]/g,' ').trim();const n=igNums(l);if(n.length>=4&&n.length<=5&&!/[a-z]{3,}/i.test(l.replace(/\d+(?:[.,]\d+)?\s?[KkMm]\b/g,''))){const v=n.map(x=>Math.abs(x.v));set('likes',v[0]);set('comments',v[1]);if(v.length===5){set('shares',v[3]);set('saves',v[4])}else{set('shares',v[2]);set('saves',v[3])}break}}}
  return R}
 const pfRange=()=>{if(PM.mode==='month'){const a=PM.anchor;const s=iso(a),e=iso(new Date(a.getFullYear(),a.getMonth()+1,0));return {s,e,label:MONTHS[a.getMonth()]+' '+a.getFullYear(),sub:fmtD(s)+' – '+fmtD(e)}}
