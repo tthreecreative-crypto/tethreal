@@ -323,6 +323,7 @@ body.member .guest{display:none!important}body:not(.member) .member{display:none
 .fmt{display:inline-block;font-size:12px;font-weight:700;padding:3px 8px;border-radius:999px;background:var(--bg2);color:var(--ink);white-space:nowrap}#v-konten .mhead{flex-wrap:wrap;gap:8px}
 .pfpick{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}.pfc{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);border-radius:999px;padding:7px 12px;font-size:14px;font-weight:600;cursor:pointer;user-select:none;min-height:38px}.pfc input{position:absolute;opacity:0;pointer-events:none}.pfc:has(input:checked){border-color:var(--c);background:var(--c);color:#fff}.pfc:has(input:checked) span::before{content:'✓ '}.pfc:has(input:focus-visible){outline:2px solid var(--c);outline-offset:2px}.flbl{font-size:14px;font-weight:600}.pfs{display:inline-flex;gap:4px;flex-wrap:wrap}.accchip{display:inline-flex;align-items:center;gap:6px;background:var(--bg2);border-radius:999px;padding:6px 6px 6px 12px;font-weight:600;font-size:14px}.accchip button{border:0;background:none;color:var(--red);font-size:16px;cursor:pointer;width:28px;height:28px;border-radius:50%}
 .mbreps{display:grid;gap:6px;grid-column:1/-1}.mbrep{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-weight:600;padding:6px 8px;border-radius:10px;background:var(--bg2);cursor:pointer}.mbrep.off{opacity:.6}.mbrep input{width:18px;height:18px}.mbrepf{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.cvgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:18px;margin-top:18px}@media(max-width:900px){.cvgrid{grid-template-columns:1fr}}.cvtpls{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}.cvt{display:grid;gap:6px;text-align:left;background:var(--bg2);border:2px solid transparent;border-radius:12px;padding:8px;cursor:pointer;font:inherit;color:inherit}.cvt.on{border-color:var(--blue)}.cvt .im{aspect-ratio:4/5;border-radius:8px;background:#dde3ef center/cover no-repeat}.cvt b{font-size:13px;line-height:1.3}.cvimgs{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,360px));gap:12px}.cvimgs img{width:100%;border-radius:10px;border:1px solid var(--line);background:#fff}.prog i b.indet{width:40%;animation:cvind 1.2s ease-in-out infinite}@keyframes cvind{0%{margin-left:-40%}100%{margin-left:100%}}
 </style>
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -421,7 +422,7 @@ body.member .guest{display:none!important}body:not(.member) .member{display:none
   <div class="brand" style="margin-bottom:6px"><select id="wsSel" aria-label="Pilih workspace"></select></div>
   <div class="brand" style="display:flex;gap:6px;margin-bottom:6px"><select id="brandSel" aria-label="Pilih akun"></select><button class="chip" id="addBrand" aria-label="Tambah akun" title="Tambah akun" style="min-width:44px;min-height:44px">+</button></div>
   <span class="lbl">Menu utama</span>
-  <button data-v="dashboard">Dashboard</button><button data-v="kalender">Kalender</button><button data-v="konten">Konten</button><button data-v="kanban">Kanban Board</button><button data-v="feed">Preview Feed</button><button data-v="idebank">Bank Ide</button><button data-v="template">Template</button>
+  <button data-v="dashboard">Dashboard</button><button data-v="kalender">Kalender</button><button data-v="konten">Konten</button><button data-v="kanban">Kanban Board</button><button data-v="feed">Preview Feed</button><button data-v="idebank">Bank Ide</button><button data-v="template">Template</button><button data-v="poster">Poster Canva</button>
   <span class="lbl">Insight</span><button data-v="performa">Performa Konten</button><button data-v="live">Report Live</button><button data-v="igreport">Report Instagram</button><button data-v="ttreport">Report TikTok</button><button data-v="bulanan">Report Bulanan</button><button data-v="analytics">Data & Integrasi</button><button data-v="pengguna" id="navAdmin" hidden>Pengguna</button>
   <span class="lbl">Lainnya</span><button data-v="tim">Tim & Workspace</button><button data-v="pengaturan">Pengaturan</button><button id="logout">Keluar</button>
   <span class="note brand" id="sync" style="margin:auto 10px 0">Memuat data…</span>
@@ -473,6 +474,16 @@ body.member .guest{display:none!important}body:not(.member) .member{display:none
    <div class="row2">
     <div class="panel"><h3 id="tpFormT">Template baru</h3><form class="lform" id="tpFrm"><label>Nama template<input id="tpName" required maxlength="60"></label><label>Jenis<select id="tpType"><option value="caption">Caption</option><option value="hashtag">Hashtag</option></select></label><label>Isi<textarea id="tpText" rows="9" required maxlength="3000"></textarea></label><p class="note" style="margin:0;font-size:12px">Gunakan {judul} dan {tanggal} untuk diisi otomatis dari konten.</p><p class="note" id="tpCount" style="margin:0;font-size:12px"></p><div class="dact" style="justify-content:flex-start;margin:0"><button class="btn sm">Simpan template</button><button type="button" class="btn ghost sm" id="tpCancel" hidden>Batal edit</button></div></form></div>
     <div class="panel"><h3>Daftar template</h3><div id="tpList" style="display:grid;gap:12px"></div></div>
+   </div>
+  </section>
+  <section id="v-poster" hidden>
+   <div class="panel"><h3>Poster dari template Canva</h3><p class="note" style="margin-top:0">Siapkan template di Canva, isi datanya di sini (posisi, syarat, fasilitas, kontak, foto), lalu unduh hasilnya sebagai PNG.</p><div id="cvConn"></div></div>
+   <div id="cvMain" hidden>
+    <div class="cvgrid">
+     <div class="panel" style="align-self:start"><h3>1. Pilih template</h3><div id="cvTpls" class="cvtpls"></div></div>
+     <div class="panel" id="cvForm" hidden><h3>2. Isi data · <span id="cvTplName" data-nt></span></h3><div class="lform"><label>Nama desain <small class="note">(untuk nama file dan di Canva)</small><input id="cvTitle" maxlength="120" placeholder="mis. Hospitality Greece – Des 2026" autocomplete="off"></label><div id="cvFields" class="lform"></div><button class="btn" id="cvGo" type="button" style="justify-self:start">Buat poster</button></div></div>
+    </div>
+    <div class="panel" id="cvRes" hidden style="margin-top:18px"><h3>3. Hasil</h3><div id="cvOut"></div></div>
    </div>
   </section>
   <section id="v-performa" hidden>
