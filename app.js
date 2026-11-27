@@ -55,7 +55,7 @@ const EN={
 'Akun dibuat. Buka email Anda untuk konfirmasi, lalu masuk.':'Account created. Open your email to confirm, then sign in.','Isi email Anda dulu, lalu klik "Lupa password?"':'Enter your email first, then click "Forgot password?"',
 'Link reset password sudah dikirim ke email Anda.':'A password reset link has been sent to your email.','Password diperbarui.':'Password updated.','Masukkan password baru Anda.':'Enter your new password.',
 // sidebar & header
-'Pilih akun':'Choose account','Tambah akun':'Add account','Menu utama':'Main menu',"Ruang kerja tim untuk merencanakan, menjadwalkan, dan melaporkan setiap cerita, dari konten organik sampai iklan, di Instagram, TikTok, sampai YouTube.":"A shared workspace for planning, scheduling and reporting every story, from organic posts to ads, on Instagram, TikTok and YouTube.","Dari ide pertama, produksi, approval klien, iklan, sampai report bulanan, semuanya tercatat rapi.":"From the first idea through production, client approval, ads and monthly reports, everything stays organised.","Workspace, chat & grup":"Workspace, chat & groups","Satu planner untuk seluruh tim, ditambah chat tim, chat pribadi, dan grup dengan @tag. Perubahan langsung terlihat di layar semua anggota.":"One planner for the whole team, plus team chat, private chat and groups with @mentions. Changes show up on everyone’s screen instantly.","Receipt iklan otomatis":"Automatic ad receipts","Tempel bukti transfer, tanggal, jam, nominal, dan rekening penerima terbaca sendiri. Simpan penerima & akun loker, lalu unduh receipt PDF berlogo.":"Paste a transfer proof and the date, time, amount and recipient account are read for you. Save recipients & job-board accounts, then download a branded PDF receipt.","Report Meta Ads & TikTok Ads dari screenshot Ads Manager: biaya, hasil, biaya per hasil, CTR, lengkap dengan total top up dari receipt.":"Meta Ads & TikTok Ads reports from Ads Manager screenshots: spend, results, cost per result and CTR, plus total top-ups from your receipts.","Backup ke Google Drive":"Google Drive backup","Semua data workspace tersimpan juga sebagai satu master file di Google Drive, lengkap dengan arsip bulanan.":"All workspace data is also kept as one master file in Google Drive, with monthly archives.","Chat, grup & link approval":"Chat, groups & approval links","Chat tim, pribadi & grup":"Team, private & group chat","Advertising: receipt iklan & Report Ads":"Advertising: ad receipts & Ads Report","Master file berisi semua data workspace ini (konten, report, Live, ide, template, akun, receipt & Report Ads, dan riwayat chat tim), disimpan di folder ":"The master file holds all of this workspace’s data (posts, reports, Live, ideas, templates, accounts, receipts & Ads Reports and team chat history), saved in the ",'Akun loker':'Job-board account','Penerima tersimpan':'Saved recipient','Simpan sebagai penerima':'Save as recipient','Hapus dari daftar':'Remove from list','Kalender':'Calendar','Konten':'Content','Pengguna':'Users','Lainnya':'Other',
+'Pilih akun':'Choose account','Tambah akun':'Add account','Menu utama':'Main menu','Isi views banyak konten sekaligus':'Fill in views for many posts at once','Tempel (Ctrl+V / Cmd+V), seret, atau pilih screenshot Insights → Content (daftar konten). Views tiap konten dicocokkan otomatis dengan konten di planner berdasarkan tanggal & judul.':'Paste (Ctrl+V / Cmd+V), drag, or choose a screenshot of Insights → Content (the post list). Each post’s views are matched to posts in the planner by date & title.',"Ruang kerja tim untuk merencanakan, menjadwalkan, dan melaporkan setiap cerita, dari konten organik sampai iklan, di Instagram, TikTok, sampai YouTube.":"A shared workspace for planning, scheduling and reporting every story, from organic posts to ads, on Instagram, TikTok and YouTube.","Dari ide pertama, produksi, approval klien, iklan, sampai report bulanan, semuanya tercatat rapi.":"From the first idea through production, client approval, ads and monthly reports, everything stays organised.","Workspace, chat & grup":"Workspace, chat & groups","Satu planner untuk seluruh tim, ditambah chat tim, chat pribadi, dan grup dengan @tag. Perubahan langsung terlihat di layar semua anggota.":"One planner for the whole team, plus team chat, private chat and groups with @mentions. Changes show up on everyone’s screen instantly.","Receipt iklan otomatis":"Automatic ad receipts","Tempel bukti transfer, tanggal, jam, nominal, dan rekening penerima terbaca sendiri. Simpan penerima & akun loker, lalu unduh receipt PDF berlogo.":"Paste a transfer proof and the date, time, amount and recipient account are read for you. Save recipients & job-board accounts, then download a branded PDF receipt.","Report Meta Ads & TikTok Ads dari screenshot Ads Manager: biaya, hasil, biaya per hasil, CTR, lengkap dengan total top up dari receipt.":"Meta Ads & TikTok Ads reports from Ads Manager screenshots: spend, results, cost per result and CTR, plus total top-ups from your receipts.","Backup ke Google Drive":"Google Drive backup","Semua data workspace tersimpan juga sebagai satu master file di Google Drive, lengkap dengan arsip bulanan.":"All workspace data is also kept as one master file in Google Drive, with monthly archives.","Chat, grup & link approval":"Chat, groups & approval links","Chat tim, pribadi & grup":"Team, private & group chat","Advertising: receipt iklan & Report Ads":"Advertising: ad receipts & Ads Report","Master file berisi semua data workspace ini (konten, report, Live, ide, template, akun, receipt & Report Ads, dan riwayat chat tim), disimpan di folder ":"The master file holds all of this workspace’s data (posts, reports, Live, ideas, templates, accounts, receipts & Ads Reports and team chat history), saved in the ",'Akun loker':'Job-board account','Penerima tersimpan':'Saved recipient','Simpan sebagai penerima':'Save as recipient','Hapus dari daftar':'Remove from list','Kalender':'Calendar','Konten':'Content','Pengguna':'Users','Lainnya':'Other',
 'Data & Integrasi':'Data & Integrations','Beranda':'Home','Pengaturan':'Settings','Memuat data…':'Loading data…','Halo':'Hi','+ Konten Baru':'+ New Post',
 'Tersimpan di server':'Saved to server','Menyimpan…':'Saving…','Gagal menyimpan ke server · tersimpan di perangkat ini':'Could not save to server · saved on this device',
 'Server tidak terjangkau · memakai data di perangkat ini':'Server unreachable · using data on this device','Akun Saya':'My Account',
@@ -178,8 +178,8 @@ const norm=d=>{const ig=d.integ&&typeof d.integ==='object'?d.integ:{};const o={o
  const okU=u=>/^https?:\/\/[^\s]+$/i.test(String(u||''))?String(u).slice(0,500):'';
  o.ideas=(Array.isArray(d.ideas)?d.ideas:[]).filter(i=>i&&typeof i==='object'&&i.id).map(i=>({id:String(i.id).slice(0,80),title:String(i.title||'Tanpa judul').slice(0,120),url:okU(i.url),note:String(i.note||'').slice(0,2000),pf:okPf(i.pf),pil:String(i.pil||'Edukasi').slice(0,40),by:String(i.by||'').slice(0,80),byId:String(i.byId||'').slice(0,60),at:String(i.at||'').slice(0,40),used:String(i.used||'').slice(0,80)}));
  o.accs=(()=>{const seen=new Set();return (Array.isArray(d.accs)?d.accs:[]).map(a=>String(a||'').trim().slice(0,60)).filter(a=>{const k=accKey(a);if(!k||seen.has(k))return false;seen.add(k);return true}).slice(0,100)})();o.cvd=(Array.isArray(d.cvd)?d.cvd:[]).filter(x=>x&&/^[A-Za-z0-9_-]{4,80}$/.test(x.id)).slice(0,50).map(x=>({id:String(x.id),title:String(x.title||'').slice(0,120)}));o.tpls=(Array.isArray(d.tpls)?d.tpls:[]).filter(t=>t&&typeof t==='object'&&t.id).map(t=>({id:String(t.id).slice(0,80),name:String(t.name||'Template').slice(0,60),type:t.type==='hashtag'?'hashtag':'caption',text:String(t.text||'').slice(0,3000),by:String(t.by||'').slice(0,80),at:String(t.at||'').slice(0,40)}));
- const IGK=['followers','netFollowers','follows','unfollows','peakFol','peakFolDate','views','viewsPrev','interactions','pctFol','pctNon','folPct','peakViews','peakViewsDate','poster','carousel','reel','viewers','vStories','vPosts','vReels','vLive','profileVisits','linkTaps','reached','videos','likes','comments','shares','profileViews'];const DT=/^\d{4}-\d\d-\d\d$/;
- o.igr=(Array.isArray(d.igr)?d.igr:[]).filter(r=>r&&typeof r==='object'&&r.id&&DT.test(r.start)&&DT.test(r.end)).map(r=>{const m={},a={};IGK.forEach(k=>{const v=r.m&&r.m[k];if(/Date$/.test(k)){if(DT.test(v))m[k]=v}else if(v!==''&&v!=null&&isFinite(+v))m[k]=+v;if(r.auto&&r.auto[k])a[k]=1});
+ const IGK=['followers','netFollowers','follows','unfollows','peakFol','peakFolDate','views','viewsPrev','interactions','pctFol','pctNon','folPct','peakViews','peakViewsDate','poster','carousel','reel','viewers','vStories','vPosts','vReels','vLive','profileVisits','linkTaps','reached','videos','likes','comments','shares','profileViews','women','men','age1317','age1824','age2534','age3544','age4554','age5564','age65','ctry','active'];const DT=/^\d{4}-\d\d-\d\d$/;
+ o.igr=(Array.isArray(d.igr)?d.igr:[]).filter(r=>r&&typeof r==='object'&&r.id&&DT.test(r.start)&&DT.test(r.end)).map(r=>{const m={},a={};IGK.forEach(k=>{const v=r.m&&r.m[k];if(k==='ctry'||k==='active'){if(typeof v==='string'&&v.trim())m[k]=v.trim().slice(0,160)}else if(/Date$/.test(k)){if(DT.test(v))m[k]=v}else if(v!==''&&v!=null&&isFinite(+v))m[k]=+v;if(r.auto&&r.auto[k])a[k]=1});
   return {id:String(r.id).slice(0,80),pf:r.pf==='tt'?'tt':'ig',brand:String(r.brand||'').slice(0,40),handle:String(r.handle||'').replace(/^@/,'').slice(0,60),start:r.start,end:r.end,lang:r.lang==='id'?'id':'en',m,auto:a,shots:(Array.isArray(r.shots)?r.shots:[]).filter(x=>x&&x.id&&!/^local-/.test(x.id)).slice(0,12).map(x=>({id:String(x.id).slice(0,120),slot:['followers','views','type','profile','content','engage','other'].includes(x.slot)?x.slot:'other',name:String(x.name||'').slice(0,200)})),by:String(r.by||'').slice(0,80),at:String(r.at||'').slice(0,40)}});
  const K=d.kit&&typeof d.kit==='object'?d.kit:{};o.kit={color:/^#[0-9a-f]{6}$/i.test(K.color)?K.color:'#b3231f',logo:/^data:image\/(png|jpeg);base64,[A-Za-z0-9+\/=]+$/.test(K.logo||'')&&K.logo.length<250000?K.logo:''};
  const AS=(v,n)=>String(v==null?'':v).slice(0,n);const ANUM=v=>v!==''&&v!=null&&isFinite(+v)&&+v>=0?+v:undefined;const APATH=/^[0-9a-f-]{36}\/[A-Za-z0-9_\-\/.]{1,120}$/;
@@ -461,7 +461,7 @@ function renderG(msg){if(msg)gMsg=msg;const ok=gLinked&&gOk();
  $('drvSave').disabled=!gLinked;$('drvLoad').disabled=!gLinked;$('drvAuto').disabled=!gLinked;$('drvAuto').checked=!!INT().autoDrive;
  $('calSyncAll').disabled=!gLinked;$('calAuto').disabled=!gLinked;$('calAuto').checked=!!INT().autoCal;
  $('drvInfo').textContent=INT().driveSaved?'Terakhir disimpan ke Drive: '+new Date(INT().driveSaved).toLocaleString(LOC()):'Belum pernah disimpan ke Drive.'}
-$('gConnect').onclick=async()=>{if(!planGate(2,'google'))return;const b=$('gConnect');b.disabled=true;gMsg='Membuka halaman Google…';renderG();
+$('gConnect').onclick=async()=>{if(!planGate(1,'google'))return;const b=$('gConnect');b.disabled=true;gMsg='Membuka halaman Google…';renderG();
  try{const j=await fnCall('start',{origin:location.origin});location.href=j.url}catch(e){b.disabled=false;renderG(e.status===404||e.error==='server_unreachable'?'Server Google belum dipasang (Edge Function "google-auth"). Lihat panduan.':gErr(e))}};
 $('gDisconnect').onclick=async()=>{try{await fnCall('disconnect')}catch(e){}dropTok();gLinked=false;INT().gLinked=false;save(true);gEv={};renderG('Sambungan Google diputus.');render()};
 
@@ -503,8 +503,8 @@ async function driveLoad(){const ic=INT();const k=wsKeyD();$('drvInfo').textCont
   const keep=S.integ,old=S;S=norm(d);S.integ=keep;['live','ideas','tpls','igr','kit','moments','accs','cvd','adr','adrep','adkit','adpay','adacc'].forEach(k2=>{if(!(k2 in d))S[k2]=old[k2]});S.integ.driveIds=S.integ.driveIds||{};S.integ.driveIds[k]=id;brand=S.order[0];fillBrands();save(true);render();toast('Data dipulihkan dari Google Drive')}
  catch(e){$('drvInfo').textContent=gErr(e);return}renderG()}
 let drvTmr=null;
-function scheduleDrive(){if(!S||!S.integ||!S.integ.autoDrive||!gLinked||myRank()<2)return;clearTimeout(drvTmr);drvTmr=setTimeout(()=>driveSave(false),30000)}
-$('drvSave').onclick=()=>{if(planGate(2,'google'))driveSave(true)};$('drvLoad').onclick=driveLoad;
+function scheduleDrive(){if(!S||!S.integ||!S.integ.autoDrive||!gLinked||myRank()<1)return;clearTimeout(drvTmr);drvTmr=setTimeout(()=>driveSave(false),30000)}
+$('drvSave').onclick=()=>{if(planGate(1,'google'))driveSave(true)};$('drvLoad').onclick=driveLoad;
 $('drvAuto').onchange=e=>{INT().autoDrive=e.target.checked;save(true);if(e.target.checked)driveSave(true)};
 
 /* Google Calendar */
@@ -521,7 +521,7 @@ async function unsyncPost(p){const c=p&&CM()[p.id];if(!c||!gLinked)return;try{aw
 function afterChange(p){save();if(p&&INT().autoCal&&gLinked&&p.st!=='ide'){syncPost(p).then(ok=>{if(ok){save(true);toast('Tersinkron ke Google Calendar');loadGEvents()}}).catch(e=>toast(gErr(e)))}}
 function afterDelete(p){if(p&&INT().autoCal)unsyncPost(p)}
 $('calAuto').onchange=e=>{INT().autoCal=e.target.checked;save(true)};
-$('calSyncAll').onclick=async()=>{if(!planGate(2,'google'))return;const b=$('calSyncAll');b.disabled=true;const list=posts().filter(p=>p.st!=='ide'&&p.date>=addD(-7));let n=0,fail=null;
+$('calSyncAll').onclick=async()=>{if(!planGate(1,'google'))return;const b=$('calSyncAll');b.disabled=true;const list=posts().filter(p=>p.st!=='ide'&&p.date>=addD(-7));let n=0,fail=null;
  try{await getToken()}catch(e){b.disabled=false;$('calMsg').textContent=gErr(e);return}
  for(const p of list){b.textContent=`Menyinkronkan ${n+1}/${list.length}…`;try{if(await syncPost(p))n++}catch(e){fail=e;break}}
  save(true);b.textContent='Sinkronkan ke Google Calendar';b.disabled=false;$('calMsg').textContent=fail?gErr(fail):`${n} konten tersinkron ke Google Calendar.`;loadGEvents()};
@@ -861,7 +861,7 @@ async function uploadFile(file,onProg){const folder=await ensureFolder();
  let shared=true;try{await gfetch(DRV+'/'+encodeURIComponent(meta.id)+'/permissions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({role:'reader',type:'anyone'})})}catch(e){shared=false}
  return {f:{id:meta.id,name:meta.name||file.name,size:+meta.size||file.size,mime:meta.mimeType||file.type||'',link:meta.webViewLink||'',by:(profile&&profile.name)||me.email,byId:me.id,at:new Date().toISOString()},shared}}
 async function trashDrive(id){try{await gfetch(DRV+'/'+encodeURIComponent(id),{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({trashed:true})})}catch(e){}}
-$('fUpBtn').onclick=()=>{if(!planGate(2,'google'))return;if(!gLinked){toast('Hubungkan Google dulu di menu Data & Integrasi');return}$('fUpIn').click()};
+$('fUpBtn').onclick=()=>{if(!planGate(1,'google'))return;if(!gLinked){toast('Hubungkan Google dulu di menu Data & Integrasi');return}$('fUpIn').click()};
 $('fUpIn').onchange=e=>{const l=[...e.target.files];e.target.value='';attachFiles(l)};
 async function attachFiles(list){const pid=editId;
  for(const file of list){const row=document.createElement('div');row.className='prog';row.setAttribute('data-nt','');
@@ -979,7 +979,7 @@ function igNum(t){if(t==null)return null;let s=String(t).trim();let neg=/^[\-−
  else v=parseFloat(core.replace(/[.,]/g,''));
  if(!isFinite(v))return null;return neg?-v:v}
 const igNums=line=>(String(line).match(IGN)||[]).map(x=>({raw:x.trim(),v:igNum(x)})).filter(x=>x.v!==null);
-function rpParse(text,pf){const L=String(text||'').replace(/ /g,' ').split(/\r?\n/).map(l=>l.trim()).filter(Boolean);const R={};const low=L.map(l=>l.toLowerCase());
+function rpParse(text,pf){const RAW=String(text||'').replace(/\u00a0/g,' ').split(/\r?\n/).map(l=>l.trim()).filter(Boolean);const L=RAW.map(l=>l.replace(/\b(last\s+)?\d{1,3}\s*(days|hari)\b\s*v?/ig,' ').replace(/\s{2,}/g,' ').trim()).filter(Boolean);const R={};const low=L.map(l=>l.toLowerCase());
  const set=(k,v)=>{if(v!=null&&isFinite(v)&&R[k]===undefined)R[k]=v};
  const after=(i,re)=>{const l=L[i];const m=l.toLowerCase().match(re);const tail=m?l.slice(m.index+m[0].length):l;const n=igNums(tail).filter(x=>!/%/.test(x.raw));return n.length?n[0].v:null};
  const nextNum=(i,max=3,stop,first)=>{for(let j=i+1;j<=i+max&&j<L.length;j++){if(stop&&stop.test(low[j]))return null;const n=igNums(L[j]).filter(x=>!/%/.test(x.raw));if(n.length&&(first||!/%/.test(L[j])))return (first?n[0]:n[n.length-1]).v}return null};
@@ -1009,18 +1009,38 @@ function rpParse(text,pf){const L=String(text||'').replace(/ /g,' ').split(/\r?
   m=lo.match(/(\d+(?:[.,]\d+)?)\s*%\s*(non-followers|non followers|bukan pengikut)/);if(m)set('pctNon',igNum(m[1]));
   m=lo.match(/(\d+(?:[.,]\d+)?)\s*%\s*(followers|pengikut)\b/);if(m&&!/non|bukan/.test(lo))set('pctFol',igNum(m[1]));
   m=lo.match(/([+\-−]?\d+(?:[.,]\d+)?)\s*%\s*(since|vs|sejak|dibanding)/);if(m)set('folPct',igNum(m[1]))});
- lab(/^(followers|pengikut)\b(?!\s*bersih)/,'followers',{not:/%|net|non|growth|pertumbuhan/});
+ for(let i=0;i<L.length-1;i++){if(!/^(followers|pengikut)$/.test(low[i]))continue;const n=igNums(L[i+1]).filter(x=>!/%/.test(x.raw)&&!/^[+\-−]/.test(x.raw));if(n.length&&n[0].v>=10){set('followers',n[0].v);const pm=(L[i+2]||'').match(/^([+\-−]?\d+(?:[.,]\d+)?)\s*%$/);if(pm)set('folPct',igNum(pm[1]))}break}
+ lab(/^(followers|pengikut)\b(?!\s*bersih)/,'followers',{not:/%|net|non|growth|pertumbuhan|by follows|over time/});
+ {const pct=s=>{const m=String(s||'').match(/(\d+(?:[.,]\d+)?)\s*%/);return m?parseFloat(m[1].replace(',','.')):null};
+  const pctAfter=i=>{const a=pct(L[i]);if(a!=null&&/[a-z]/i.test(L[i].replace(/(\d+(?:[.,]\d+)?)\s*%/,'')))return a;const b=pct(L[i+1]);return b!=null?b:a};
+  const gi=low.findIndex(l=>/^(gender|jenis kelamin)\b/.test(l));
+  if(gi>=0){for(let i=gi;i<Math.min(L.length,gi+8);i++){if(/^(women|perempuan|wanita)\b/.test(low[i])){const v=pctAfter(i);if(v!=null)set('women',v)}if(/^(men|laki-laki|pria)\b/.test(low[i])){const v=pctAfter(i);if(v!=null)set('men',v)}}}
+  [['age1317','13','17'],['age1824','18','24'],['age2534','25','34'],['age3544','35','44'],['age4554','45','54'],['age5564','55','64'],['age65','65','+']].forEach(([k,a,b])=>{const re=b==='+'?/^65\s*\+/:new RegExp('^'+a+'\\s*[-–]\\s*'+b+'(?!\\d)');
+   for(let i=0;i<L.length;i++){if(re.test(low[i])){const v=pctAfter(i);if(v!=null){set(k,v);break}}}});
+  const ti=low.findIndex(l=>/^(top locations|lokasi teratas)\b/.test(l));
+  if(ti>=0&&R.ctry===undefined){const C=[];for(let i=ti+1;i<L.length&&C.length<3;i++){if(/^(countries|negara|cities|kota)\b/.test(low[i]))continue;if(/^(follower active|when followers|gender|age range)/.test(low[i]))break;
+    const nm=L[i].replace(/[^A-Za-zÀ-ÿ .'-]/g,'').trim();if(nm.length>=3&&nm.length<=30&&!/\d/.test(L[i])){const v=pct(L[i+1]);if(v!=null&&v>0){C.push(nm+' '+String(v).replace('.',',')+'%');i++}}}
+   if(C.length)R.ctry=C.join(' · ')}
+  const ai=low.findIndex(l=>/(when followers are most active|waktu pengikut paling aktif|pengikut paling aktif)/.test(l));
+  if(ai>=0&&R.active===undefined){const DN=[['sun',0],['minggu',0],['mon',1],['senin',1],['tue',2],['selasa',2],['wed',3],['rabu',3],['thu',4],['kamis',4],['fri',5],['jumat',5],['sat',6],['sabtu',6]];const days=[];let hrs='';
+   for(let i=ai+1;i<L.length&&i<ai+12;i++){const d=low[i].replace(/[^a-z]/g,'');const k=d.length<=10&&DN.find(x=>d.startsWith(x[0]));if(k){if(!days.includes(k[1]))days.push(k[1]);continue}const h=L[i].match(/^(\d{1,2})\s*[-–]\s*(\d{1,2})$/);if(h&&!hrs)hrs=h[1]+'-'+h[2]}
+   if(days.length&&hrs)R.active=days.join(',')+'|'+hrs}}
+
  for(let i=0;i<L.length;i++){const m=low[i].match(/^(\d[\d.,]*\s?[km]?)\s+(followers|pengikut)$/);if(m)set('followers',igNum(m[1]))}
  lab(/(net followers|pengikut bersih)/,'netFollowers',{signed:true,not:/growth|pertumbuhan/});
  lab(/^(views|tayangan|total views)\b/,'views',{not:/content type|jenis konten|by|berdasarkan|net followers/});
- lab(/\b(interactions|interaksi)\b/,'interactions',{not:/net followers|views/});
+ lab(/\b(interactions|interaksi)\b/,'interactions',{not:/net followers|views|content type|jenis konten|berdasarkan|\bby\b/});
  lab(/(profile visits|kunjungan profil)/,'profileVisits');
  lab(/(bio link taps|external link taps|link taps|ketukan tautan( bio| eksternal)?)/,'linkTaps');
  lab(/^(viewers|penonton|pemirsa)\b/,'viewers');
  const ST=/^(stories|cerita|posts|postingan|reels|live videos|video siaran langsung|video langsung|siaran langsung)\b/;
+ const SEC=low.map(()=>'');{let cur='';low.forEach((l,i)=>{if(/(views by content type|tayangan berdasarkan jenis konten|berdasarkan jenis konten)/.test(l)&&!/interact|interaksi/.test(l))cur='v';else if(/(interactions by content type|interaksi berdasarkan)/.test(l))cur='i';else if(/^(profile activity|aktivitas profil|top content|konten teratas|followers|pengikut|gender|age range|top locations)\b/.test(l))cur='';SEC[i]=cur})}
+ const hasISec=SEC.includes('i');
  [['vStories',/^(stories|cerita)\b/],['vPosts',/^(posts|postingan)\b/],['vReels',/^(reels)\b/],['vLive',/^(live videos|video siaran langsung|video langsung|siaran langsung)\b/]].forEach(([k,re])=>{
-  for(let i=0;i<L.length;i++){if(!re.test(low[i]))continue;let v=after(i,re);if(v==null)v=nextNum(i,2,ST);if(v!=null){set(k,Math.abs(v));break}}});
- if(/views by content type|berdasarkan jenis konten|tayangan berdasarkan|top content|konten teratas/.test(all))slot='type';
+  for(let i=0;i<L.length;i++){if(!re.test(low[i]))continue;if(SEC[i]==='i'||(hasISec&&SEC[i]!=='v'))continue;let v=after(i,re);if(v==null)v=nextNum(i,2,ST);if(v!=null){set(k,Math.abs(v));break}}});
+ if(/follower growth|pertumbuhan (pengikut|follower)/.test(all))slot='followers';
+ else if(/(gender|age range|top locations|follower active times|jenis kelamin|rentang usia|lokasi teratas)/.test(all)&&!/views by content type/.test(all))slot='other';
+ else if(/views by content type|berdasarkan jenis konten|tayangan berdasarkan|top content|konten teratas|latest views viewers|terbaru tayangan/.test(all))slot='type';
  else if(/profile activity|aktivitas profil|profile visits|kunjungan profil/.test(all))slot='profile';
  else if(/unfollows|berhenti mengikuti|\bfollows\b/.test(all))slot='followers';
  else if(/non-followers|bukan pengikut|all content|semua konten/.test(all))slot='views';
@@ -1034,17 +1054,17 @@ const SHOTURL={};let IGR=null,RP='ig',igDirty=false,ocrWorker=null,ocrLoading=nu
 const RPF={
  ig:{name:'Instagram',fields:[['followers','Followers'],['netFollowers','Net followers'],['follows','Follows'],['unfollows','Unfollows'],['peakFol','Puncak follower (net)'],['peakFolDate','Tanggal puncak follower','date'],
    ['views','Views'],['viewsPrev','Views periode lalu'],['interactions','Interactions'],['pctFol','% followers'],['pctNon','% non-followers'],['peakViews','Puncak views'],['peakViewsDate','Tanggal puncak views','date'],
-   ['poster','Poster'],['carousel','Carousel'],['reel','Reels'],['viewers','Viewers'],['vStories','Views Stories'],['vPosts','Views Posts'],['vReels','Views Reels'],['vLive','Views Live'],['profileVisits','Profile visits'],['linkTaps','Bio link taps']],
-  groups:[['Followers',['followers','netFollowers','follows','unfollows','peakFol','peakFolDate']],['Views',['views','viewsPrev','interactions','pctFol','pctNon','peakViews','peakViewsDate']],['Konten',['poster','carousel','reel','viewers','vStories','vPosts','vReels','vLive']],['Profil',['profileVisits','linkTaps']]],
+   ['poster','Poster'],['carousel','Carousel'],['reel','Reels'],['viewers','Viewers'],['vStories','Views Stories'],['vPosts','Views Posts'],['vReels','Views Reels'],['vLive','Views Live'],['profileVisits','Profile visits'],['linkTaps','Bio link taps'],['women','% wanita'],['men','% pria'],['age1317','% usia 13–17'],['age1824','% usia 18–24'],['age2534','% usia 25–34'],['age3544','% usia 35–44'],['age4554','% usia 45–54'],['age5564','% usia 55–64'],['age65','% usia 65+'],['ctry','Lokasi teratas','text'],['active','Jam paling aktif','text']],
+  groups:[['Followers',['followers','netFollowers','follows','unfollows','peakFol','peakFolDate']],['Views',['views','viewsPrev','interactions','pctFol','pctNon','peakViews','peakViewsDate']],['Konten',['poster','carousel','reel','viewers','vStories','vPosts','vReels','vLive']],['Profil',['profileVisits','linkTaps']],['Audiens',['women','men','age1317','age1824','age2534','age3544','age4554','age5564','age65','ctry','active']]],
   slots:[['followers','Grafik follower','Followers chart'],['views','Grafik views','Views chart'],['type','Jenis konten & top konten','Content type & top content'],['profile','Aktivitas profil','Profile activity'],['other','Tidak dipakai','Not used']],
-  hint:['Upload screenshot dari Insights → Followers, Views, dan Profile activity. Kalau Google terhubung, screenshot ikut tersimpan di Drive.','Upload screenshots from Insights → Followers, Views, and Profile activity. If Google is connected, screenshots are also saved to Drive.']},
+  hint:['Upload screenshot Insights: Overview (views, interaksi, aktivitas profil) dan Audience (followers, gender, usia, lokasi, jam aktif). Kalau Google terhubung, screenshot ikut tersimpan di Drive.','Upload Insights screenshots: Overview (views, interactions, profile activity) and Audience (followers, gender, age, locations, active times). If Google is connected, screenshots are also saved to Drive.']},
  tt:{name:'TikTok',fields:[['followers','Followers'],['netFollowers','Net followers'],['peakFol','Puncak follower (net)'],['peakFolDate','Tanggal puncak follower','date'],
    ['views','Post views'],['viewsPrev','Views periode lalu'],['reached','Reached audience'],['peakViews','Puncak views'],['peakViewsDate','Tanggal puncak views','date'],
    ['videos','Video terbit'],['likes','Likes'],['comments','Comments'],['shares','Shares'],['profileViews','Profile views']],
   groups:[['Followers',['followers','netFollowers','peakFol','peakFolDate']],['Views',['views','viewsPrev','reached','peakViews','peakViewsDate']],['Engagement',['videos','likes','comments','shares','profileViews']]],
   slots:[['followers','Grafik follower','Followers chart'],['views','Grafik views','Views chart'],['content','Postingan teratas','Top posts'],['engage','Engagement','Engagement'],['other','Tidak dipakai','Not used']],
   hint:['Upload screenshot dari TikTok Studio → Analytics: tab Overview dan Followers. Kalau Google terhubung, screenshot ikut tersimpan di Drive.','Upload screenshots from TikTok Studio → Analytics: the Overview and Followers tabs. If Google is connected, screenshots are also saved to Drive.']}};
-const FLD_EN={'Puncak follower (net)':'Peak followers (net)','Tanggal puncak follower':'Peak followers date','Views periode lalu':'Previous period views','Puncak views':'Peak views','Tanggal puncak views':'Peak views date','Video terbit':'Videos posted'};
+const FLD_EN={'% wanita':'% women','% pria':'% men','% usia 13–17':'% age 13–17','% usia 18–24':'% age 18–24','% usia 25–34':'% age 25–34','% usia 35–44':'% age 35–44','% usia 45–54':'% age 45–54','% usia 55–64':'% age 55–64','% usia 65+':'% age 65+','Lokasi teratas':'Top locations','Jam paling aktif':'Most active times','Puncak follower (net)':'Peak followers (net)','Tanggal puncak follower':'Peak followers date','Views periode lalu':'Previous period views','Puncak views':'Peak views','Tanggal puncak views':'Peak views date','Video terbit':'Videos posted'};
 const addDays=(d,n)=>{const x=new Date(d+'T00:00');x.setDate(x.getDate()+n);return iso(x)};
 const newIgr=pf=>{const e=new Date(today),s=new Date(today);s.setMonth(s.getMonth()-1);const last=igrs().filter(r=>r.brand===brand&&r.pf===pf).sort((a,b)=>b.end.localeCompare(a.end))[0];
  const other=igrs().filter(r=>r.brand===brand).sort((a,b)=>b.end.localeCompare(a.end))[0];
@@ -1081,6 +1101,16 @@ const rpHead=(r,title)=>{const logo=kit().logo,col=kit().color||'#b3231f';return
 const rpFoot=()=>{const col=kit().color||'#b3231f';return `<div class="rp-ft" style="background:linear-gradient(90deg,${col},color-mix(in srgb,${col} 70%,#000))"></div>`};
 const rpLast=(r)=>{const days=(new Date(r.end)-new Date(r.start))/864e5;return days>=25&&days<=35?(r.lang==='id'?'bulan lalu':'last month'):(r.lang==='id'?'periode sebelumnya':'the previous period')};
 
+function activeTxt(code,lang){const m=String(code||'').match(/^([\d,]+)\|(\d{1,2})-(\d{1,2})$/);if(!m)return String(code||'');const en=lang!=='id';const N=en?['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']:['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+ const d=m[1].split(',').map(Number).filter(x=>x>=0&&x<7);const seq=d.length>2&&d.every((x,i)=>!i||x===d[i-1]+1);const ds=seq?N[d[0]]+'–'+N[d[d.length-1]]:d.map(x=>N[x]).join(', ');
+ const h=x=>en?x+':00':String(x).padStart(2,'0')+'.00';return `${ds}, ${h(m[2])}–${h(m[3])}`}
+function activeLang(t,lang){const EN=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],ID=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];let x=String(t||'');
+ if(lang==='id'){EN.forEach((d,i)=>{x=x.replace(new RegExp('\\b'+d+'s?\\b','g'),ID[i])});x=x.replace(/\b(\d{1,2}):00\b/g,(m,h)=>h.padStart(2,'0')+'.00')}else{ID.forEach((d,i)=>{x=x.replace(new RegExp('\\b'+d+'\\b','g'),EN[i])});x=x.replace(/\b(\d{2})\.00\b/g,(m,h)=>(+h)+':00')}return x}
+function audLines(r){const m=r.m||{},id=r.lang==='id',out=[];const P=v=>(+v).toLocaleString(rLoc(r),{maximumFractionDigits:1})+'%';
+ if(has(m.men)||has(m.women))out.push(`${id?'Audiens':'Audience'}: ${[has(m.men)?P(m.men)+(id?' pria':' men'):'',has(m.women)?P(m.women)+(id?' wanita':' women'):''].filter(Boolean).join(' · ')}`);
+ const AG=[['age1317','13–17'],['age1824','18–24'],['age2534','25–34'],['age3544','35–44'],['age4554','45–54'],['age5564','55–64'],['age65','65+']].filter(([k])=>has(m[k])).sort((a,b)=>m[b[0]]-m[a[0]]);
+ if(AG.length)out.push(`${id?'Usia terbanyak':'Top age range'}: ${AG[0][1]}${id?' tahun':''} (${P(m[AG[0][0]])})${AG[1]?`, ${id?'lalu':'then'} ${AG[1][1]} (${P(m[AG[1][0]])})`:''}`);
+ if(has(m.ctry))out.push(`${id?'Lokasi teratas':'Top locations'}: ${esc(m.ctry)}`);if(has(m.active))out.push(`${id?'Paling aktif':'Most active'}: ${esc(activeLang(m.active,r.lang))}`);return out}
 function igrHTML(r){const m=r.m||{},id=r.lang==='id',col=kit().color||'#b3231f',tt=r.pf==='tt';
  const shot=k=>{const s=(r.shots||[]).find(x=>x.slot===k);const src=s&&shotSrc(s);return src?`<div class="rp-shot"><img src="${esc(src)}" alt=""></div>`:''};
  const net=+m.netFollowers||0,fol=+m.followers||0;const gp=has(m.followers)&&has(m.netFollowers)&&fol-net>0?net/(fol-net)*100:(has(m.folPct)?+m.folPct:null);
@@ -1093,6 +1123,7 @@ function igrHTML(r){const m=r.m||{},id=r.lang==='id',col=kit().color||'#b3231f',
  if(has(m.views)&&pv!=null){const d=+m.views-pv;right.push(`${d>=0?(id?'Naik':'Increased'):(id?'Turun':'Decreased')} <span style="color:${d>=0?'#16a34a':'#e70b4b'}">${rSign(r,d)}</span> ${id?'dari':'from'} ${rpLast(r)} (${rC(r,pv)})`)}
  const er=tt&&has(m.views)&&+m.views>0&&(has(m.likes)||has(m.comments)||has(m.shares))?((+m.likes||0)+(+m.comments||0)+(+m.shares||0))/+m.views*100:null;
  const extra=[];if(tt&&has(m.reached))extra.push(`${id?'Penonton yang dijangkau':'Reached audience'}: ${rN(r,m.reached)}`);if(er!=null)extra.push(`${id?'Tingkat engagement':'Engagement rate'}: ${rPct(r,er)}`);
+ if(!tt)audLines(r).forEach(x=>extra.push(x));
  if(has(m.peakViews))extra.push(`${id?'Puncak views pada':'Peak views at'} ${has(m.peakViewsDate)?rD(r,m.peakViewsDate)+' ':''}(${rC(r,m.peakViews)} views)`);
  const bar=(lbl,v,max)=>`<div class="rp-tb"><span>${lbl}</span><i><b style="width:${max?Math.max(1,(+v||0)/max*100):0}%;background:${col}"></b></i><em>${rC(r,v)}</em></div>`;
  const tmax=Math.max(+m.vStories||0,+m.vPosts||0,+m.vReels||0,+m.vLive||0);
@@ -1132,8 +1163,8 @@ function renderIG(){const en=LANG==='en';$('igTitle').textContent=(en?PFX().name
 function renderShots(){const r=IGR;const en=LANG==='en';
  $('igShots').innerHTML=(r.shots||[]).map((s,i)=>`<div class="igs"><div class="igs-img" style="background-image:url('${esc(shotSrc(s))}')"></div><div class="igs-b"><small class="note" data-nt>${esc(s.status||s.name||'')}</small><select data-slot="${i}" aria-label="Posisi di report" data-nt>${PFX().slots.map(([k,l,le])=>`<option value="${k}"${s.slot===k?' selected':''}>${esc(en?le:l)}</option>`).join('')}</select><button type="button" class="chip" data-shrm="${i}" aria-label="Hapus screenshot">×</button></div></div>`).join('')}
 function renderIGForm(){const r=IGR,m=r.m||{};const prev=prevOf(r);const en=LANG==='en';const lbl=Object.fromEntries(PFX().fields.map(x=>[x[0],x]));
- $('igForm').innerHTML=PFX().groups.map(([g,keys])=>`<fieldset><legend>${en&&g==='Konten'?'Content':en&&g==='Profil'?'Profile':g}${g==='Konten'||(RP==='tt'&&g==='Engagement')?` <button type="button" class="link" id="igCount">${en?'Count from planner':'Hitung dari planner'}</button>`:''}</legend>${keys.map(k=>{const [,l,t]=lbl[k];const ph=k==='viewsPrev'&&prev&&has(prev.m.views)?(en?'Auto: ':'Otomatis: ')+(+prev.m.views).toLocaleString(LOC()):'';
-  return `<label class="${r.auto&&r.auto[k]?'auto':''}">${esc(en?FLD_EN[l]||l:l)}<input data-igk="${k}" ${t==='date'?'type="date"':'inputmode="decimal" autocomplete="off"'} value="${esc(has(m[k])?(t==='date'?m[k]:(+m[k]).toLocaleString(LOC(),{maximumFractionDigits:2})):'')}" placeholder="${esc(ph)}"></label>`}).join('')}</fieldset>`).join('')}
+ $('igForm').innerHTML=PFX().groups.map(([g,keys])=>`<fieldset><legend>${en&&g==='Konten'?'Content':en&&g==='Profil'?'Profile':en&&g==='Audiens'?'Audience':g}${g==='Konten'||(RP==='tt'&&g==='Engagement')?` <button type="button" class="link" id="igCount">${en?'Count from planner':'Hitung dari planner'}</button>`:''}</legend>${keys.map(k=>{const [,l,t]=lbl[k];const ph=k==='viewsPrev'&&prev&&has(prev.m.views)?(en?'Auto: ':'Otomatis: ')+(+prev.m.views).toLocaleString(LOC()):'';
+  return `<label class="${r.auto&&r.auto[k]?'auto':''}${t==='text'?' wide':''}">${esc(en?FLD_EN[l]||l:l)}<input data-igk="${k}" ${t==='date'?'type="date"':t==='text'?'maxlength="160" autocomplete="off"':'inputmode="decimal" autocomplete="off"'} value="${esc(has(m[k])?(t==='date'||t==='text'?m[k]:(+m[k]).toLocaleString(LOC(),{maximumFractionDigits:2})):'')}" placeholder="${esc(ph)}"></label>`}).join('')}</fieldset>`).join('')}
 function renderIGPreview(){const box=$('igPrev');if(!box||!IGR)return;box.innerHTML=igrHTML(IGR);fitPage(box)}
 function fitPage(box){const k=Math.min(1,(box.clientWidth||1123)/1123);box.style.height=Math.round(794*k)+'px';const pg=box.firstElementChild;if(pg)pg.style.transform=`scale(${k})`}
 function igSetDirty(){igDirty=true;$('igSaveMsg').textContent=LANG==='en'?'Unsaved changes':'Belum disimpan';renderIGPreview()}
@@ -1144,7 +1175,7 @@ $('igList').onclick=e=>{const b=e.target.closest('[data-igr]');if(!b)return;if(!
 $('igColor').addEventListener('input',e=>{kit().color=e.target.value;igSetDirty()});
 $('igColor').addEventListener('change',()=>save());
 $('igForm').addEventListener('input',e=>{const i=e.target.closest('[data-igk]');if(!i||!IGR)return;const k=i.dataset.igk;const t=(PFX().fields.find(x=>x[0]===k)||[])[2];
- if(t==='date'){if(i.value)IGR.m[k]=i.value;else delete IGR.m[k]}else{const v=igNum(i.value.replace(/\s/g,''));if(i.value.trim()==='')delete IGR.m[k];else if(v!=null)IGR.m[k]=v}if(IGR.auto)delete IGR.auto[k];i.parentElement.classList.remove('auto');igSetDirty()});
+ if(t==='text'){if(i.value.trim())IGR.m[k]=i.value.slice(0,160);else delete IGR.m[k]}else if(t==='date'){if(i.value)IGR.m[k]=i.value;else delete IGR.m[k]}else{const v=igNum(i.value.replace(/\s/g,''));if(i.value.trim()==='')delete IGR.m[k];else if(v!=null)IGR.m[k]=v}if(IGR.auto)delete IGR.auto[k];i.parentElement.classList.remove('auto');igSetDirty()});
 $('igForm').addEventListener('click',e=>{if(!e.target.closest('#igCount'))return;const c=countPlanner(IGR);IGR.m={...IGR.m,...c};IGR.auto={...IGR.auto,...Object.fromEntries(Object.keys(c).map(k=>[k,1]))};renderIGForm();igSetDirty();
  const en=LANG==='en';toast(RP==='tt'?(en?`From planner: ${c.videos} TikTok videos published`:`Dari planner: ${c.videos} video TikTok terbit`):(en?`From planner: ${c.poster} poster, ${c.carousel} carousel, ${c.reel} reels published`:`Dari planner: ${c.poster} poster, ${c.carousel} carousel, ${c.reel} reels terbit`))});
 $('igShots').addEventListener('change',e=>{const s=e.target.closest('[data-slot]');if(!s)return;const i=+s.dataset.slot;const v=s.value;IGR.shots.forEach((x,j)=>{if(j!==i&&x.slot===v&&v!=='other')x.slot='other'});IGR.shots[i].slot=v;renderShots();igSetDirty()});
@@ -1155,7 +1186,7 @@ $('igLogoRm').onclick=()=>{kit().logo='';save();renderIG()};
 $('igFiles').onchange=async e=>{const files=[...e.target.files];e.target.value='';if(!IGR)return;const r=IGR;const en=LANG==='en';
  for(const f of files){const s={id:'local-'+uid('s'),slot:'other',name:f.name,status:en?'Reading numbers…':'Membaca angka…'};SHOTURL[s.id]=URL.createObjectURL(f);r.shots.push(s);if(IGR===r)renderShots();
   try{const w=await loadOCR();const {canvas}=await prepImage(f);const {data}=await w.recognize(canvas);const {fields,slot}=rpParse(data.text,r.pf||'ig');let n=0;
-   Object.entries(fields).forEach(([k,v])=>{if(!PFX().fields.some(x=>x[0]===k)&&k!=='folPct')return;if(!has(r.m[k])||(r.auto&&r.auto[k])){r.m[k]=v;r.auto=r.auto||{};r.auto[k]=1;n++}});
+   if(fields.active)fields.active=activeTxt(fields.active,r.lang);Object.entries(fields).forEach(([k,v])=>{if(!PFX().fields.some(x=>x[0]===k)&&k!=='folPct')return;if(!has(r.m[k])||(r.auto&&r.auto[k])){r.m[k]=v;r.auto=r.auto||{};r.auto[k]=1;n++}});
    if(slot!=='other'&&!r.shots.some(x=>x!==s&&x.slot===slot))s.slot=slot;s.status=n?(en?`${n} numbers read`:`${n} angka terbaca`):(en?'No numbers recognised':'Tidak ada angka terbaca')}
   catch(err){s.status=en?'Could not read automatically, fill in manually':'Gagal dibaca otomatis, isi manual'}
   if(gLinked){try{const {f:up}=await uploadFile(f,()=>{});SHOTURL[up.id]=SHOTURL[s.id];s.id=up.id}catch(x){}}
@@ -1407,6 +1438,24 @@ function postParse(text){const L=String(text||'').replace(/ /g,' ').split(/\r?\
  if(R.follows===undefined){const pi=low.findIndex(l=>/^(profil|profile|aktivitas profil|profile activity)\b/.test(l));if(pi>=0)for(let i=pi+1;i<L.length;i++){if(/^(pengikut|followers|follows|ikuti)\b/.test(low[i])){const n=igNums(L[i].replace(/^\S+\s*/,'')).filter(x=>!/%/.test(x.raw));if(n.length){set('follows',n[0].v);break}}}}
  if(R.likes===undefined){for(const l of L){const t=l.replace(/[^\d.,KkMm+\s-]/g,' ').trim();const n=igNums(l);if(n.length>=4&&n.length<=5&&!/[a-z]{3,}/i.test(l.replace(/\d+(?:[.,]\d+)?\s?[KkMm]\b/g,''))){const v=n.map(x=>Math.abs(x.v));set('likes',v[0]);set('comments',v[1]);if(v.length===5){set('shares',v[3]);set('saves',v[4])}else{set('shares',v[2]);set('saves',v[3])}break}}}
  return R}
+/* Screenshot Insights → Content (daftar banyak postingan): judul, tanggal, views */
+function listParse(text){const out=[];String(text||'').split(/\r?\n/).forEach(l=>{l=l.replace(/ /g,' ').trim();
+ const m=l.match(/^(.*?)\s+(\d{1,2}\/\d{1,2}|\d{1,2}\s?[dhw]|\d{1,2}\s?(?:hari|jam|mgg))\s+(\d[\d.,]*\s?(?:[KkMm]|rb|jt)?)\s*(?:views|tayangan)?$/i);if(!m)return;
+ const v=igNum(m[3].replace(/\s/g,''));if(v==null||v<1)return;const title=m[1].replace(/\.{2,}|…/g,' ').replace(/^[^A-Za-z\[\d]*(?:\S{0,4}\s+){0,2}?(?=[A-Z\[])/,'').trim();
+ let date=null;const dm=m[2].match(/^(\d{1,2})\/(\d{1,2})$/);const now=new Date(today);
+ if(dm){let y=now.getFullYear();const d=new Date(y,+dm[2]-1,+dm[1]);if(d-now>2*864e5)d.setFullYear(y-1);date=iso(d)}
+ else{const rm=m[2].match(/(\d+)\s?(d|h|w|hari|jam|mgg)/i);const n=+rm[1],u=rm[2].toLowerCase();const d=new Date(now);if(u==='d'||u==='hari')d.setDate(d.getDate()-n);else if(u==='w'||u==='mgg')d.setDate(d.getDate()-7*n);date=iso(d)}
+ out.push({title,date,views:v,rel:!dm})});return out}
+function listApply(rows){const en=LANG==='en';const words=t=>String(t||'').toLowerCase().replace(/[^a-z0-9à-ÿ ]/g,' ').split(/\s+/).filter(w=>w.length>=3);
+ const P=posts().filter(p=>p.st==='pub'&&hasPf(p,'ig')&&(!PM.acc||accKey(p.acc)===PM.acc));let filled=0,had=0,miss=0;const used=new Set();
+ rows.forEach(r=>{const near=P.filter(p=>!used.has(p.id)&&Math.abs((new Date(p.date)-new Date(r.date))/864e5)<=(r.rel?1:0));const W=words(r.title);
+  const sc=near.map(p=>{const T=words(p.title+' '+(p.cap||'').slice(0,120));return {p,n:W.filter(w=>T.some(t=>t.startsWith(w)||w.startsWith(t))).length}}).sort((a,b)=>b.n-a.n);
+  const best=sc[0]&&(sc[0].n>=1||(near.length===1&&!r.rel))?sc[0].p:null;if(!best){miss++;return}used.add(best.id);best.perf=best.perf||{};
+  if(+best.perf.views>0){had++;return}best.perf.views=r.views;best.perfAt=new Date().toISOString();filled++});
+ if(filled)save();renderPerf();toast(en?`${rows.length} posts read · ${filled} filled${had?` · ${had} already had numbers`:''}${miss?` · ${miss} not found in the planner`:''}`:`${rows.length} konten terbaca · ${filled} diisi${had?` · ${had} sudah ada angkanya`:''}${miss?` · ${miss} tidak ada di planner`:''}`)}
+async function perfList(file){const en=LANG==='en';toast(en?'Reading the content list…':'Membaca daftar konten…');
+ try{const w=await loadOCR();const {canvas}=await prepImage(file);const {data}=await w.recognize(canvas);const rows=listParse(data.text);if(!rows.length){toast(en?'No posts recognised in this screenshot':'Tidak ada konten yang terbaca dari screenshot ini');return}listApply(rows)}
+ catch(e){toast(en?'Could not read the screenshot':'Gagal membaca screenshot')}}
 const pfRange=()=>{if(PM.mode==='month'){const a=PM.anchor;const s=iso(a),e=iso(new Date(a.getFullYear(),a.getMonth()+1,0));return {s,e,label:MONTHS[a.getMonth()]+' '+a.getFullYear(),sub:fmtD(s)+' – '+fmtD(e)}}
  if(PM.mode==='90')return {s:addD(-90),e:T,label:LANG==='en'?'Last 90 days':'90 hari terakhir',sub:fmtD(addD(-90))+' – '+fmtD(T)};return {s:'0000',e:'9999',label:LANG==='en'?'All time':'Semua waktu',sub:''}};
 const pfPosts=()=>{const r=pfRange();return posts().filter(p=>p.st==='pub'&&p.date>=r.s&&p.date<=r.e&&(PM.pf==='all'||hasPf(p,PM.pf))&&(!PM.acc||accKey(p.acc)===PM.acc)).sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time))};
@@ -1458,9 +1507,11 @@ $('pfList').addEventListener('dragover',e=>{const d=e.target.closest('[data-pid]
 $('pfList').addEventListener('dragleave',e=>{const d=e.target.closest('[data-pid]');if(d&&!d.contains(e.relatedTarget))d.classList.remove('over')});
 $('pfList').addEventListener('drop',e=>{const d=e.target.closest('[data-pid]');if(!d)return;e.preventDefault();d.classList.remove('over');const f=[...(e.dataTransfer.files||[])].find(x=>/^image\//.test(x.type));if(f)perfShot(d.dataset.pid,f);else toast(LANG==='en'?'Drop an image file':'Tarik file gambar')});
 $('pfFile').onchange=e=>{const f=e.target.files[0];const pid=e.target.dataset.pid;e.target.value='';if(f&&pid)perfShot(pid,f)};
-document.addEventListener('paste',e=>{if(view!=='performa'||!pfActive||anyOpen())return;const it=[...(e.clipboardData&&e.clipboardData.items||[])].find(i=>/^image\//.test(i.type));if(!it)return;e.preventDefault();perfShot(pfActive,it.getAsFile())});
+document.addEventListener('paste',e=>{if(view!=='performa'||anyOpen())return;const it=[...(e.clipboardData&&e.clipboardData.items||[])].find(i=>/^image\//.test(i.type));if(!it)return;e.preventDefault();if(pfActive)perfShot(pfActive,it.getAsFile());else perfList(it.getAsFile())});
+$('pfListFile').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f)perfList(f)};
+{const z=$('pfListDrop');['dragenter','dragover'].forEach(ev=>z.addEventListener(ev,e=>{e.preventDefault();z.classList.add('over')}));['dragleave','drop'].forEach(ev=>z.addEventListener(ev,()=>z.classList.remove('over')));z.addEventListener('drop',e=>{e.preventDefault();const f=[...(e.dataTransfer.files||[])].find(x=>/^image\//.test(x.type));if(f)perfList(f)})}
 async function perfShot(pid,file){const p=findPost(pid);if(!p)return;const en=LANG==='en';PFST[pid]=en?'Reading numbers…':'Membaca angka…';renderPerf();
- try{const w=await loadOCR();const {canvas}=await prepImage(file);const {data}=await w.recognize(canvas);const R=postParse(data.text);const keys=pfKeys(p.pf);let n=0;p.perf=p.perf||{};
+ try{const w=await loadOCR();const {canvas}=await prepImage(file);const {data}=await w.recognize(canvas);{const rows=listParse(data.text);if(rows.length>=3){delete PFST[pid];listApply(rows);return}}const R=postParse(data.text);const keys=pfKeys(p.pf);let n=0;p.perf=p.perf||{};
   keys.forEach(k=>{if(R[k]!=null){p.perf[k]=R[k];n++}});p.perfAt=new Date().toISOString();PFST[pid]=n?(en?`${n} numbers read · check them`:`${n} angka terbaca · cek lagi`):(en?'No numbers recognised, fill in manually':'Tidak ada angka terbaca, isi manual')}
  catch(err){PFST[pid]=en?'Could not read automatically, fill in manually':'Gagal dibaca otomatis, isi manual'}
  save();renderPerf();
