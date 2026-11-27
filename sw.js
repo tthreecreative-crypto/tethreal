@@ -1,6 +1,6 @@
 // te.threal service worker: makes the site installable and opens the last loaded version when offline.
 // Pages and scripts are always fetched fresh first (network-first), so updates uploaded to GitHub show up right away.
-const CACHE = 'tethreal-v3';
+const CACHE = 'tethreal-v4';
 const SHELL = ['/', '/index.html', '/app.js', '/config.js', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png'];
 
 self.addEventListener('install', (e) => {
@@ -9,19 +9,31 @@ self.addEventListener('install', (e) => {
 self.addEventListener('activate', (e) => {
   e.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim()));
 });
+const CDN = /^https:\/\/(cdn\.jsdelivr\.net|fonts\.googleapis\.com|fonts\.gstatic\.com)\//;
 self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
-  if (url.origin !== self.location.origin) return; // Supabase, Google, Canva and CDNs go straight to the network
-  e.respondWith(
-    fetch(req).then((res) => {
-      if (res && res.ok && res.type === 'basic') { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(req, copy)); }
-      return res;
-    }).catch(() => caches.match(req, { ignoreSearch: true }).then((hit) => hit || (req.mode === 'navigate' ? caches.match('/index.html') : undefined)))
-  );
+  // Library & font dari CDN: pakai salinan tersimpan dulu (cepat), lalu perbarui di belakang
+  if (CDN.test(req.url)) {
+    e.respondWith(caches.open(CACHE).then(async (c) => {
+      const hit = await c.match(req);
+      const net = fetch(req).then((res) => { if (res && (res.ok || res.type === 'opaque')) c.put(req, res.clone()); return res; }).catch(() => hit);
+      return hit || net;
+    }));
+    return;
+  }
+  if (url.origin !== self.location.origin) return; // Supabase, Google, Canva langsung ke internet
+  // Halaman & script sendiri: ambil versi terbaru, tapi kalau internet lambat (>3 detik) pakai salinan tersimpan dulu
+  e.respondWith((async () => {
+    const c = await caches.open(CACHE);
+    const net = fetch(req).then((res) => { if (res && res.ok && res.type === 'basic') c.put(req, res.clone()); return res; });
+    const hit = await c.match(req, { ignoreSearch: true }) || (req.mode === 'navigate' ? await c.match('/index.html') : undefined);
+    if (!hit) return net.catch(() => Response.error());
+    const slow = new Promise((r) => setTimeout(() => r(hit), 3000));
+    return Promise.race([net.catch(() => hit), slow]);
+  })());
 });
-
 // Notifikasi push dari te.threal
 self.addEventListener('push', (e) => {
   let d = {};
