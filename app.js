@@ -55,7 +55,7 @@ const EN={
 'Akun dibuat. Buka email Anda untuk konfirmasi, lalu masuk.':'Account created. Open your email to confirm, then sign in.','Isi email Anda dulu, lalu klik "Lupa password?"':'Enter your email first, then click "Forgot password?"',
 'Link reset password sudah dikirim ke email Anda.':'A password reset link has been sent to your email.','Password diperbarui.':'Password updated.','Masukkan password baru Anda.':'Enter your new password.',
 // sidebar & header
-'Pilih akun':'Choose account','Tambah akun':'Add account','Menu utama':'Main menu','Penerima tersimpan':'Saved recipient','Simpan sebagai penerima':'Save as recipient','Hapus dari daftar':'Remove from list','Kalender':'Calendar','Konten':'Content','Pengguna':'Users','Lainnya':'Other',
+'Pilih akun':'Choose account','Tambah akun':'Add account','Menu utama':'Main menu','Akun loker':'Job-board account','Penerima tersimpan':'Saved recipient','Simpan sebagai penerima':'Save as recipient','Hapus dari daftar':'Remove from list','Kalender':'Calendar','Konten':'Content','Pengguna':'Users','Lainnya':'Other',
 'Data & Integrasi':'Data & Integrations','Beranda':'Home','Pengaturan':'Settings','Memuat data…':'Loading data…','Halo':'Hi','+ Konten Baru':'+ New Post',
 'Tersimpan di server':'Saved to server','Menyimpan…':'Saving…','Gagal menyimpan ke server · tersimpan di perangkat ini':'Could not save to server · saved on this device',
 'Server tidak terjangkau · memakai data di perangkat ini':'Server unreachable · using data on this device','Akun Saya':'My Account',
@@ -135,7 +135,7 @@ const RX=[
 [/^Terakhir disimpan ke Drive: (.+)$/,m=>'Last saved to Drive: '+m[1]],[/^(\d+) akun menunggu persetujuan$/,m=>`${m[1]} account${m[1]==='1'?'':'s'} waiting for approval`],
 [/^Akun (.+) sudah terdaftar\. Admin perlu menyetujuinya dulu sebelum Anda bisa masuk\.$/,m=>`The account ${m[1]} is registered. An admin needs to approve it before you can sign in.`],
 [/^Dijadwalkan (.+)$/,m=>'Scheduled '+m[1]],[/^Akun (.+) ditambahkan$/,m=>`Account ${m[1]} added`],[/^Status: (.+)$/,m=>'Status: '+(EN[m[1]]||m[1])],
-[/^Dibuat (.+)$/,m=>'Generated '+m[1]],[/^Google menolak akses: (.+)$/,m=>'Google denied access: '+(m[1]==='cek API & izin di Google Cloud.'?'check the APIs & permissions in Google Cloud.':m[1])],
+[/^Dibuat (?!oleh$)(.+)$/,m=>'Generated '+m[1]],[/^Google menolak akses: (.+)$/,m=>'Google denied access: '+(m[1]==='cek API & izin di Google Cloud.'?'check the APIs & permissions in Google Cloud.':m[1])],
 [/^Google gagal merespons: (.+)$/,m=>'Google failed to respond: '+m[1]],[/^Gagal: (.+)$/,m=>'Failed: '+m[1]],
 [/^(Report Live .+) - (.+)$/,m=>m[0]]
 ];
@@ -188,6 +188,7 @@ const norm=d=>{const ig=d.integ&&typeof d.integ==='object'?d.integ:{};const o={o
  const ADK=['spend','results','cpr','reach','impr','clicks','ctr','cpc','cpm','freq','vviews'];
  o.adrep=(Array.isArray(d.adrep)?d.adrep:[]).filter(r=>r&&typeof r==='object'&&r.id&&/^\d{4}-\d\d-\d\d$/.test(r.start)&&/^\d{4}-\d\d-\d\d$/.test(r.end)).slice(0,1000).map(r=>{const m={},a={};ADK.forEach(k=>{const v=ANUM(r.m&&r.m[k]);if(v!==undefined)m[k]=v;if(r.auto&&r.auto[k])a[k]=1});
   return {id:AS(r.id,80),acc:AS(r.acc,60).replace(/^@/,''),pf:r.pf==='tiktok'?'tiktok':'meta',start:r.start,end:r.end,title:AS(r.title,120),obj:AS(r.obj,40),resl:AS(r.resl,40),cur:r.cur==='USD'?'USD':'IDR',m,auto:a,shots:(Array.isArray(r.shots)?r.shots:[]).filter(x=>APATH.test(x)).slice(0,8),note:AS(r.note,1500),lang:r.lang==='en'?'en':'id',by:AS(r.by,80),at:AS(r.at,40)}});
+ o.adacc=(()=>{const seen=new Set();return (Array.isArray(d.adacc)?d.adacc:[]).map(a=>AS(a,60).trim().replace(/^@/,'')).filter(a=>{const k=a.toLowerCase();if(!a||seen.has(k))return false;seen.add(k);return true}).slice(0,300)})();
  o.adpay=(Array.isArray(d.adpay)?d.adpay:[]).filter(x=>x&&typeof x==='object'&&x.id&&(x.name||x.rek)).slice(0,300).map(x=>({id:AS(x.id,80),name:AS(x.name,80),bank:AS(x.bank,60),rek:AS(x.rek,40),acc:AS(x.acc,60).replace(/^@/,''),pf:['meta','tiktok','google','other'].includes(x.pf)?x.pf:'',used:AS(x.used,40)}));
  {const K=d.adkit&&typeof d.adkit==='object'?d.adkit:{};o.adkit={color:/^#[0-9a-f]{6}$/i.test(K.color)?K.color:'#1445ce',logo:/^data:image\/(png|jpeg);base64,[A-Za-z0-9+\/=]+$/.test(K.logo||'')&&K.logo.length<250000?K.logo:'',company:AS(K.company,80),addr:AS(K.addr,160),sign:AS(K.sign,60)}}
  o.moments=(Array.isArray(d.moments)?d.moments:[]).filter(m=>m&&m.id&&/^\d{4}-\d\d-\d\d$/.test(m.date)).map(m=>({id:String(m.id).slice(0,80),date:m.date,name:String(m.name||'Momen').slice(0,80),note:String(m.note||'').slice(0,300),by:String(m.by||'').slice(0,80)}));
@@ -472,7 +473,7 @@ const masterName=(suffix)=>`te.threal – ${(WS?WS.name:'Planner').replace(/[\\/
 async function masterJSON(){let chat=[];
  if(sb&&WS){try{for(let from=0;from<10000;from+=1000){const {data}=await sb.from('chat_messages').select('id,user_name,body,created_at,mentions').eq('workspace_id',WS.id).order('id').range(from,from+999);chat=chat.concat(data||[]);if(!data||data.length<1000)break}}catch(e){}}
  return JSON.stringify({app:'te.threal',version:2,savedAt:new Date().toISOString(),workspace:WS?{id:WS.id,name:WS.name,chat_name:WS.chat_name||''}:null,
-  data:{order:S.order,brands:S.brands,goals:S.goals,live:S.live,ideas:S.ideas,tpls:S.tpls,igr:S.igr,kit:S.kit,moments:S.moments,accs:S.accs||[],cvd:S.cvd||[],adr:S.adr||[],adrep:S.adrep||[],adkit:S.adkit,adpay:S.adpay||[]},chat},null,1)}
+  data:{order:S.order,brands:S.brands,goals:S.goals,live:S.live,ideas:S.ideas,tpls:S.tpls,igr:S.igr,kit:S.kit,moments:S.moments,accs:S.accs||[],cvd:S.cvd||[],adr:S.adr||[],adrep:S.adrep||[],adkit:S.adkit,adpay:S.adpay||[],adacc:S.adacc||[]},chat},null,1)}
 async function ensureArchive(){const ic=INT();const root=await ensureFolder();
  if(ic.archFolder){try{const r=await gfetch(DRV+'/'+encodeURIComponent(ic.archFolder)+'?fields=id,trashed');const j=await r.json();if(!j.trashed)return ic.archFolder}catch(e){if(e.status!==404)throw e}}
  const q=encodeURIComponent(`mimeType='application/vnd.google-apps.folder' and trashed=false and name='Arsip' and '${root}' in parents`);
@@ -499,7 +500,7 @@ async function driveLoad(){const ic=INT();const k=wsKeyD();$('drvInfo').textCont
   if(!d||!d.brands){$('drvInfo').textContent='Isi file tidak dikenali sebagai master file te.threal.';return}
   if(j.workspace&&WS&&j.workspace.id!==WS.id&&!confirm(LANG==='en'?`This file belongs to workspace "${j.workspace.name}". Restore it into "${WS.name}"?`:`File ini milik workspace "${j.workspace.name}". Tetap pulihkan ke "${WS.name}"?`)){renderG();return}
   if(!confirm(LANG==='en'?'Replace this workspace’s data with the Drive copy? Changes made after it was saved will be lost.':'Ganti data workspace ini dengan salinan dari Drive? Perubahan setelah tanggal simpan file itu akan hilang.')){renderG();return}
-  const keep=S.integ,old=S;S=norm(d);S.integ=keep;['live','ideas','tpls','igr','kit','moments','accs','cvd','adr','adrep','adkit','adpay'].forEach(k2=>{if(!(k2 in d))S[k2]=old[k2]});S.integ.driveIds=S.integ.driveIds||{};S.integ.driveIds[k]=id;brand=S.order[0];fillBrands();save(true);render();toast('Data dipulihkan dari Google Drive')}
+  const keep=S.integ,old=S;S=norm(d);S.integ=keep;['live','ideas','tpls','igr','kit','moments','accs','cvd','adr','adrep','adkit','adpay','adacc'].forEach(k2=>{if(!(k2 in d))S[k2]=old[k2]});S.integ.driveIds=S.integ.driveIds||{};S.integ.driveIds[k]=id;brand=S.order[0];fillBrands();save(true);render();toast('Data dipulihkan dari Google Drive')}
  catch(e){$('drvInfo').textContent=gErr(e);return}renderG()}
 let drvTmr=null;
 function scheduleDrive(){if(!S||!S.integ||!S.integ.autoDrive||!gLinked||myRank()<2)return;clearTimeout(drvTmr);drvTmr=setTimeout(()=>driveSave(false),30000)}
@@ -701,6 +702,7 @@ function itemsFromS(){const m=new Map();
  (S.igr||[]).forEach(r=>m.set(ik('igr',r.id),{kind:'igr',key:r.id,data:JSON.parse(JSON.stringify(r))}));
  (S.adr||[]).forEach(r=>m.set(ik('adr',r.id),{kind:'adr',key:r.id,data:JSON.parse(JSON.stringify(r))}));
  (S.adrep||[]).forEach(r=>m.set(ik('adrep',r.id),{kind:'adrep',key:r.id,data:JSON.parse(JSON.stringify(r))}));
+ if((S.adacc||[]).length)m.set(ik('meta','adacc'),{kind:'meta',key:'adacc',data:{list:[...S.adacc]}});
  if((S.adpay||[]).length)m.set(ik('meta','adpay'),{kind:'meta',key:'adpay',data:{list:S.adpay.map(x=>({...x}))}});
  if(S.adkit&&(S.adkit.logo||S.adkit.company||S.adkit.addr||S.adkit.sign||S.adkit.color!=='#1445ce'))m.set(ik('meta','adkit'),{kind:'meta',key:'adkit',data:{...S.adkit}});
  if(S.kit&&(S.kit.logo||S.kit.color!=='#b3231f'))m.set(ik('meta','brandkit'),{kind:'meta',key:'brandkit',data:{...S.kit}});
@@ -708,7 +710,7 @@ function itemsFromS(){const m=new Map();
 const canon=it=>JSON.stringify(it.data);
 function resync(){synced=new Map();itemsFromS().forEach((it,k)=>synced.set(k,canon(it)))}
 function ensureBrand(b){b=String(b||'').slice(0,40)||'Akun Saya';if(!S.brands[b]){if(!S.order.includes(b))S.order.push(b);S.brands[b]=[];S.goals[b]=S.goals[b]||[]}if(!S.live)S.live={};if(!S.live[b])S.live[b]=[];return b}
-function stateFromRows(rows){const meta=rows.find(r=>r.kind==='meta'&&r.key==='order');const d={order:meta&&meta.data&&Array.isArray(meta.data.order)?[...meta.data.order]:[],brands:{},goals:{},live:{},integ:S.integ,ideas:[],tpls:[],igr:[],moments:[],adr:[],adrep:[]};{const ak=rows.find(r=>r.kind==='meta'&&r.key==='adkit');if(ak&&ak.data)d.adkit=ak.data;const ap=rows.find(r=>r.kind==='meta'&&r.key==='adpay');d.adpay=ap&&ap.data&&Array.isArray(ap.data.list)?ap.data.list:[]}const kitRow=rows.find(r=>r.kind==='meta'&&r.key==='brandkit');if(kitRow&&kitRow.data)d.kit=kitRow.data;const cvRow=rows.find(r=>r.kind==='meta'&&r.key==='cvd');d.cvd=cvRow&&cvRow.data&&Array.isArray(cvRow.data.list)?cvRow.data.list:[];const accRow=rows.find(r=>r.kind==='meta'&&r.key==='accs');d.accs=accRow&&accRow.data&&Array.isArray(accRow.data.list)?accRow.data.list:[];
+function stateFromRows(rows){const meta=rows.find(r=>r.kind==='meta'&&r.key==='order');const d={order:meta&&meta.data&&Array.isArray(meta.data.order)?[...meta.data.order]:[],brands:{},goals:{},live:{},integ:S.integ,ideas:[],tpls:[],igr:[],moments:[],adr:[],adrep:[]};{const ak=rows.find(r=>r.kind==='meta'&&r.key==='adkit');if(ak&&ak.data)d.adkit=ak.data;const aa=rows.find(r=>r.kind==='meta'&&r.key==='adacc');d.adacc=aa&&aa.data&&Array.isArray(aa.data.list)?aa.data.list:[];const ap=rows.find(r=>r.kind==='meta'&&r.key==='adpay');d.adpay=ap&&ap.data&&Array.isArray(ap.data.list)?ap.data.list:[]}const kitRow=rows.find(r=>r.kind==='meta'&&r.key==='brandkit');if(kitRow&&kitRow.data)d.kit=kitRow.data;const cvRow=rows.find(r=>r.kind==='meta'&&r.key==='cvd');d.cvd=cvRow&&cvRow.data&&Array.isArray(cvRow.data.list)?cvRow.data.list:[];const accRow=rows.find(r=>r.kind==='meta'&&r.key==='accs');d.accs=accRow&&accRow.data&&Array.isArray(accRow.data.list)?accRow.data.list:[];
  const add=b=>{b=String(b||'Akun Saya').slice(0,40);if(!d.order.includes(b))d.order.push(b);d.brands[b]=d.brands[b]||[];d.live[b]=d.live[b]||[];return b};
  d.order.forEach(add);
  rows.forEach(r=>{if(!r.data)return;if(r.kind==='post'){const b=add(r.data.brand);d.brands[b].push({...r.data,id:r.key})}
@@ -718,6 +720,7 @@ function stateFromRows(rows){const meta=rows.find(r=>r.kind==='meta'&&r.key==='o
  const keep=S.integ;S=norm(d);S.integ=keep||S.integ}
 function applyRow(r){if(!WS||r.workspace_id!==WS.id)return;if(r.client_id===CID)return;const k=ik(r.kind,r.key);const dead=r.deleted||!r.data;
  if(r.kind==='meta'&&r.key==='brandkit'){S.kit=norm({kit:dead?{}:r.data}).kit}
+ else if(r.kind==='meta'&&r.key==='adacc'){S.adacc=norm({adacc:dead?[]:(r.data.list||[])}).adacc;if(typeof adRemote==='function')setTimeout(adRemote,0)}
  else if(r.kind==='meta'&&r.key==='adpay'){S.adpay=norm({adpay:dead?[]:(r.data.list||[])}).adpay;if(typeof rcPayUI==='function'&&view==='adreceipt')setTimeout(rcPayUI,0)}
  else if(r.kind==='meta'&&r.key==='adkit'){S.adkit=norm({adkit:dead?{}:r.data}).adkit;if(typeof adRemote==='function')setTimeout(adRemote,0)}
  else if(r.kind==='adr'||r.kind==='adrep'){S[r.kind]=(S[r.kind]||[]).filter(x=>x.id!==r.key);if(!dead){const n=norm({[r.kind]:[{...r.data,id:r.key}]})[r.kind][0];if(n)S[r.kind].push(n)}if(typeof adRemote==='function')setTimeout(adRemote,0)}
@@ -2017,8 +2020,13 @@ async function adPut(blob,path){const {error}=await sb.storage.from('ads').uploa
 function adRm(paths){paths=(paths||[]).filter(Boolean);if(paths.length&&sb)sb.storage.from('ads').remove(paths).then(()=>{},()=>{})}
 function adDownload(u8,name){const b=new Blob([u8],{type:'application/pdf'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name.replace(/[–—]/g,'-').replace(/[\\/:*?"<>|]/g,'').replace(/\s+/g,' ').trim()+'.pdf';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000)}
 function adFit(box,W,H){const pg=box.firstElementChild;if(!pg)return;const k=Math.min(1,(box.clientWidth||W)/W);box.style.height=Math.round(H*k)+'px';pg.style.transform=`scale(${k})`}
-function adAccSel(el,cur){el.innerHTML=accOpts(cur?'@'+cur:'');el.value=cur?(allAccs().concat('@'+cur).find(a=>accKey(a)===accKey(cur))||''):'';el.dataset.prev=el.value}
-function adAccPick(el,set){el.addEventListener('change',()=>{if(el.value!=='__new'){el.dataset.prev=el.value;set(el.value.replace(/^@/,'').slice(0,60));return}const n=askAcc();adAccSel(el,(n||el.dataset.prev||'').replace(/^@/,''));set(el.value.replace(/^@/,'').slice(0,60))})}
+const adaccs=()=>{if(!Array.isArray(S.adacc))S.adacc=[];return S.adacc};
+function adAccAll(){const m=new Map();adaccs().forEach(a=>m.set(accKey(a),a));[...adrs(),...adreps(),...adpays()].forEach(x=>{const k=accKey(x.acc);if(k&&!m.has(k))m.set(k,x.acc)});return [...m.values()].sort((a,b)=>a.localeCompare(b))}
+function adAccAdd(a){a=String(a||'').trim().replace(/^@/,'').slice(0,60);if(!a)return '';if(!adaccs().some(x=>accKey(x)===accKey(a))){adaccs().push(a);S.adacc=norm({adacc:adaccs()}).adacc;save()}return a}
+function adAccSel(el,cur){const en=LANG==='en';const A=adAccAll();if(cur&&!A.some(a=>accKey(a)===accKey(cur)))A.push(cur);const lok=el.id==='rcAcc';
+ el.innerHTML=`<option value="">${lok?(en?'— Choose a job-board account —':'— Pilih akun loker —'):(en?'— Choose account —':'— Pilih akun —')}</option>`+A.map(a=>`<option value="${esc(a)}">@${esc(a)}</option>`).join('')+`<option value="__new">${lok?(en?'+ Add job-board account…':'+ Tambah akun loker…'):(en?'+ Add account…':'+ Tambah akun…')}</option>`;
+ el.value=cur?(A.find(a=>accKey(a)===accKey(cur))||''):'';el.dataset.prev=el.value}
+function adAccPick(el,set){el.addEventListener('change',()=>{if(el.value!=='__new'){el.dataset.prev=el.value;set(el.value.replace(/^@/,'').slice(0,60));return}const en=LANG==='en';const n=prompt(el.id==='rcAcc'?(en?'Job-board account name (e.g. @infolokerbali.id)':'Nama akun loker (mis. @infolokerbali.id)'):(en?'Account name (e.g. @eliterecruitment.id)':'Nama akun (mis. @eliterecruitment.id)'),'@');const a=n&&n.replace(/^@/,'').trim()?adAccAdd(n):'';adAccSel(el,a||(el.dataset.prev||'').replace(/^@/,''));set(el.value.replace(/^@/,'').slice(0,60))})}
 const imgFromClip=e=>{const it=[...((e.clipboardData||{}).items||[])].find(x=>x.kind==='file'&&/^image\//.test(x.type));return it?it.getAsFile():null};
 function adDrop(zone,onFiles){['dragenter','dragover'].forEach(ev=>zone.addEventListener(ev,e=>{e.preventDefault();zone.classList.add('over')}));['dragleave','drop'].forEach(ev=>zone.addEventListener(ev,()=>zone.classList.remove('over')));
  zone.addEventListener('drop',e=>{e.preventDefault();const f=[...(e.dataTransfer.files||[])].filter(x=>/^image\//.test(x.type));if(f.length)onFiles(f);else toast(LANG==='en'?'Drop an image file':'Seret file gambar')})}
@@ -2044,7 +2052,7 @@ function rcHTML(r){const en=r.lang==='en',col=adCol(),k=adkit(),logo=adLogo();co
   <div class="rc-ttl"><h1 style="color:${col}">RECEIPT</h1><p>${en?'Advertising payment':'Bukti pembayaran iklan'}</p><dl><dt>No.</dt><dd>${esc(r.no||'-')}</dd><dt>${en?'Issued':'Dibuat'}</dt><dd>${esc(adShort(String(r.at||'').slice(0,10)||iso(today),r.lang))}</dd></dl></div></div>
   <div class="rc-amt" style="background:linear-gradient(120deg,${col},color-mix(in srgb,${col} 68%,#000))"><small>${en?'Amount paid':'Jumlah dibayarkan'}</small><b>${esc(adMoney(r.amount,r.cur,r.lang))}</b>${adSpell(r.amount,r.cur,r.lang)?`<em>${en?'In words':'Terbilang'}: ${esc(adSpell(r.amount,r.cur,r.lang))}</em>`:''}<span class="rc-stamp">${en?'PAID':'LUNAS'}</span></div>
   <div class="rc-when"><i aria-hidden="true">🕒</i><span>${when}</span></div>
-  <div class="rc-grid"><div class="rc-box"><h4>${en?'Ad details':'Detail iklan'}</h4>${row(en?'Ad account':'Akun iklan',r.acc?'@'+r.acc:'-')}${row('Platform',adPfName(r.pf,r.lang))}${row(en?'Purpose':'Keperluan',purp)}${row(en?'Note':'Keterangan',r.note)}</div>
+  <div class="rc-grid"><div class="rc-box"><h4>${en?'Ad details':'Detail iklan'}</h4>${row(en?'Job-board account':'Akun loker',r.acc?'@'+r.acc:'-')}${row('Platform',adPfName(r.pf,r.lang))}${row(en?'Purpose':'Keperluan',purp)}${row(en?'Note':'Keterangan',r.note)}</div>
    <div class="rc-box"><h4>${en?'Paid to':'Rekening penerima'}</h4>${row(en?'Name':'Nama',r.name||'-')}${row('Bank',r.bank||'-')}${row(en?'Account no.':'No. rekening',r.rek||'-')}${row(en?'Reference':'No. referensi',r.ref)}</div></div>
   <div class="rc-proof"><h4>${en?'Proof of transfer':'Bukti transfer'}</h4><div>${src?`<img src="${esc(src)}" alt="">`:`<p>${en?'No proof attached':'Belum ada bukti transfer'}</p>`}</div></div>
   <div class="rc-foot"><div>${en?'Prepared by':'Dibuat oleh'}<br><b>${esc(r.by||'-')}</b>${k.company?`<br>${esc(k.company)}`:''}</div></div>
@@ -2059,13 +2067,13 @@ function rcList(){const fa=$('rcAccF');const H=[...new Set(adrs().map(r=>accKey(
  $('rcList').innerHTML=h}
 /* penerima tersimpan */
 const adpays=()=>Array.isArray(S.adpay)?S.adpay:(S.adpay=[]);const rekKey=x=>String(x||'').replace(/\D/g,'');
-const payLabel=x=>[x.name||'-',x.bank,x.rek].filter(Boolean).join(' · ');
-function rcPayMatch(r){const k=rekKey(r.rek);return k.length>=6?adpays().find(x=>rekKey(x.rek)===k):null}
+const payLabel=x=>(x.acc?'@'+x.acc+' — ':'')+[x.name||'-',x.bank,x.rek].filter(Boolean).join(' · ');
+function rcPayMatch(r,anyAcc){const k=rekKey(r.rek);if(k.length<6)return null;const L=adpays().filter(x=>rekKey(x.rek)===k).sort((a,b)=>String(b.used).localeCompare(String(a.used)));return (!anyAcc&&L.find(x=>accKey(x.acc)===accKey(r.acc)))||(anyAcc||!r.acc?L[0]:null)||null}
 function rcPayUI(){if(!RC)return;const en=LANG==='en';const L=[...adpays()].sort((a,b)=>String(b.used).localeCompare(String(a.used))||a.name.localeCompare(b.name));const cur=rcPayMatch(RC);
  $('rcPayee').innerHTML=`<option value="">${en?(L.length?'— Choose a saved recipient —':'No saved recipients yet'):(L.length?'— Pilih penerima tersimpan —':'Belum ada penerima tersimpan')}</option>`+L.map(x=>`<option value="${esc(x.id)}">${esc(payLabel(x))}</option>`).join('');
  $('rcPayee').value=cur?cur.id:'';$('rcPayDel').hidden=!cur;$('rcPaySave').hidden=!!cur||!(RC.name&&rekKey(RC.rek).length>=6);
  $('rcPayHint').textContent=cur?(en?'Saved recipient. Drop the screenshot: only the date, time and amount will be filled in.':'Penerima tersimpan. Tinggal tempel screenshot, yang diisi cuma tanggal, jam, dan nominal.'):(L.length?'':(en?'Recipients are saved automatically when you save a receipt.':'Penerima otomatis tersimpan saat kamu menyimpan receipt.'))}
-function rcPayApply(x){const r=RC;r.name=x.name;r.bank=x.bank;r.rek=x.rek;if(x.acc&&!r.acc)r.acc=x.acc;if(x.pf&&r._new&&!r._pfTouched)r.pf=x.pf;if(r.auto){delete r.auto.name;delete r.auto.bank;delete r.auto.rek}}
+function rcPayApply(x){const r=RC;r.name=x.name;r.bank=x.bank;r.rek=x.rek;if(x.acc)r.acc=x.acc;if(x.pf&&r._new&&!r._pfTouched)r.pf=x.pf;if(r.auto){delete r.auto.name;delete r.auto.bank;delete r.auto.rek}}
 function rcPayRemember(r){if(!r.name||rekKey(r.rek).length<6)return;const ex=rcPayMatch(r);const now=new Date().toISOString();
  if(ex){ex.name=r.name;ex.bank=r.bank;ex.rek=r.rek;ex.acc=r.acc||ex.acc;ex.pf=r.pf||ex.pf;ex.used=now}else adpays().push({id:uid('py'),name:r.name,bank:r.bank,rek:r.rek,acc:r.acc,pf:r.pf,used:now});S.adpay=norm({adpay:adpays()}).adpay}
 $('rcPayee').addEventListener('change',e=>{if(!RC)return;const x=adpays().find(y=>y.id===e.target.value);if(!x)return;rcPayApply(x);rcForm();rcSetDirty()});
@@ -2085,7 +2093,7 @@ const rcLeave=()=>!rcDirty||confirm(LANG==='en'?'Discard unsaved changes to this
 $('rcNew').onclick=()=>{if(!planGate(2,'Receipt iklan'))return;if(!rcLeave())return;RC=rcNew();rcDirty=false;$('rcMsg').textContent='';renderRC();$('rcDrop').focus()};
 $('rcList').onclick=e=>{const b=e.target.closest('[data-rc]');if(!b||!rcLeave())return;const r=adrs().find(x=>x.id===b.dataset.rc);if(!r)return;RC=JSON.parse(JSON.stringify(r));rcDirty=false;$('rcMsg').textContent='';renderRC()};
 $('rcAccF').onchange=rcList;
-adAccPick($('rcAcc'),v=>{if(RC){RC.acc=v;rcSetDirty()}});
+adAccPick($('rcAcc'),v=>{if(RC){RC.acc=v;rcPayUI();rcSetDirty()}});
 const rcNum=s=>{s=String(s||'').trim();if(!s)return undefined;const v=txMoney(s.replace(/^(rp|idr|us\$|\$)\s*/i,''));return v==null?undefined:v};
 $('rcForm').addEventListener('input',e=>{const t=e.target;if(!RC||t.id==='rcAcc')return;const r=RC;
  const map={rcPf:'pf',rcPurpose:'purpose',rcDate:'date',rcTime:'time',rcCur:'cur',rcName:'name',rcBank:'bank',rcRek:'rek',rcRef:'ref',rcNo:'no',rcLang:'lang',rcNote:'note',rcBy:'by'};
@@ -2096,7 +2104,7 @@ $('rcForm').addEventListener('input',e=>{const t=e.target;if(!RC||t.id==='rcAcc'
 async function rcIngest(file){if(!file)return;const en=LANG==='en';if(!RC){if(!planGate(2,'Receipt iklan'))return;RC=rcNew();rcDirty=false;renderRC()}const r=RC;
  let blob;try{blob=await adCompress(file,1600,.85)}catch(e){toast(en?'Could not read that image':'Gambar tidak bisa dibaca');return}
  if(r._img&&/^blob:/.test(r._img))URL.revokeObjectURL(r._img);r._img=URL.createObjectURL(blob);r._blob=blob;rcProofUI(en?'Reading the proof of transfer…':'Membaca bukti transfer…');rcSetDirty();
- try{const w=await loadOCR();const {canvas}=await prepImage(file);const {data}=await w.recognize(canvas);const P=txParse(data.text);let n=0;r.auto=r.auto||{};const pay=rcPayMatch(r)||(P.rek&&rcPayMatch({rek:P.rek}));if(pay){if(!rcPayMatch(r))rcPayApply(pay);['name','bank','rek'].forEach(k=>delete P[k])}
+ try{const w=await loadOCR();const {canvas}=await prepImage(file);const {data}=await w.recognize(canvas);const P=txParse(data.text);let n=0;r.auto=r.auto||{};const pay=rcPayMatch(r)||(P.rek&&rcPayMatch({rek:P.rek},true));if(pay){if(!rcPayMatch(r))rcPayApply(pay);['name','bank','rek'].forEach(k=>delete P[k])}
   ['amount','date','time','name','bank','rek','ref','note'].forEach(k=>{if(P[k]==null||P[k]==='')return;if(k==='note'&&r.note&&!r.auto.note)return;if(k==='date'||k==='time'||k==='amount'||k==='ref'||!r[k]||r.auto[k]||r._new){r[k]=P[k];r.auto[k]=1;n++}});
   if(P.cur&&r.auto.amount)r.cur=P.cur;if(r.auto.date&&r._new&&/^RCPT\//.test(r.no))r.no=rcNextNo(r.date);
   if(RC===r){rcForm();rcProofUI(n?(en?`${n} details read automatically. Check the yellow boxes.`:`${n} data terbaca otomatis. Cek kotak kuning.`):(en?'Nothing could be read automatically. Fill in manually.':'Tidak ada data yang terbaca. Isi manual.'));rcSetDirty()}}
@@ -2105,7 +2113,7 @@ $('rcFile').onchange=e=>{const f=e.target.files[0];e.target.value='';rcIngest(f)
 adDrop($('rcDrop'),f=>rcIngest(f[0]));
 $('rcProof').addEventListener('click',e=>{if(!e.target.closest('#rcProofRm')||!RC)return;if(RC._img&&/^blob:/.test(RC._img))URL.revokeObjectURL(RC._img);RC._img='';RC._blob=null;RC._rmProof=RC.proof||RC._rmProof;RC.proof='';rcProofUI();rcSetDirty()});
 $('rcSave').onclick=async()=>{if(!RC||rcBusy)return;const en=LANG==='en';const r=RC;
- if(!r.acc){toast(en?'Choose the ad account first':'Pilih akun iklan dulu');$('rcAcc').focus();return}if(!(+r.amount>0)){toast(en?'Fill in the amount':'Isi nominalnya dulu');$('rcAmt').focus();return}if(!r.date){toast(en?'Fill in the transfer date':'Isi tanggal transfer dulu');$('rcDate').focus();return}
+ if(!r.acc){toast(en?'Choose the job-board account first':'Pilih akun loker dulu');$('rcAcc').focus();return}if(!(+r.amount>0)){toast(en?'Fill in the amount':'Isi nominalnya dulu');$('rcAmt').focus();return}if(!r.date){toast(en?'Fill in the transfer date':'Isi tanggal transfer dulu');$('rcDate').focus();return}
  rcBusy=true;$('rcMsg').textContent=en?'Saving…':'Menyimpan…';const old=[];
  try{if(r._blob){if(!WS)throw {m:'ws'};const path=`${WS.id}/rc/${r.id}-${Date.now().toString(36)}.jpg`;await adPut(r._blob,path);if(r.proof&&r.proof!==path)old.push(r.proof);r.proof=path;r._blob=null}
   if(r._rmProof&&r._rmProof!==r.proof)old.push(r._rmProof);delete r._rmProof;
