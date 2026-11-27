@@ -1,6 +1,6 @@
 // te.threal service worker: makes the site installable and opens the last loaded version when offline.
 // Pages and scripts are always fetched fresh first (network-first), so updates uploaded to GitHub show up right away.
-const CACHE = 'tethreal-v2';
+const CACHE = 'tethreal-v3';
 const SHELL = ['/', '/index.html', '/app.js', '/config.js', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png'];
 
 self.addEventListener('install', (e) => {
@@ -31,7 +31,8 @@ self.addEventListener('push', (e) => {
     // Kalau te.threal sedang dibuka dan terlihat, lonceng di dalam web sudah menampilkannya.
     if (wins.some((c) => c.visibilityState === 'visible' && c.focused)) return;
     await self.registration.showNotification(d.title || 'te.threal', {
-      body: d.body || '', icon: '/icon-192.png', badge: '/icon-192.png', tag: d.tag || undefined, renotify: !!d.tag,
+      body: d.body || '', icon: '/icon-192.png', badge: '/icon-192.png', tag: d.tag || undefined, renotify: !!d.tag, silent: false,
+      vibrate: [120, 60, 120], timestamp: Date.now(),
       data: { url: d.url || '/#dashboard' },
     });
   })());

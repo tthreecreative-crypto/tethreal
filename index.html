@@ -287,13 +287,20 @@ body.member .guest{display:none!important}body:not(.member) .member{display:none
 .igl{display:grid;grid-template-columns:250px minmax(0,1fr);gap:18px;align-items:start}#igEd:not([hidden]){display:grid;gap:18px}
 @media(max-width:900px){.igl{grid-template-columns:1fr}}
 .igri{display:grid;gap:2px;text-align:left;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--card);cursor:pointer;font:inherit;color:var(--ink);width:100%}.igri.on{border-color:var(--blue);background:var(--blue2)}.igri small{color:var(--mute)}
+.wsw{position:relative}.wsdot{position:absolute;top:-3px;right:-3px;width:12px;height:12px;border-radius:50%;background:var(--red);border:2px solid var(--card);box-shadow:0 0 0 0 rgba(231,11,75,.5);animation:ppulse 2s ease-in-out infinite;pointer-events:none}
+.bpi .wsn{display:inline-flex;align-items:center;gap:4px}.bpi .wsn::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--red)}
+.sndt{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;cursor:pointer}.sndt input{width:18px;height:18px;accent-color:var(--blue)}
+.ntpops{position:fixed;top:max(14px,env(safe-area-inset-top));right:14px;z-index:120;display:grid;gap:8px;width:min(360px,calc(100vw - 28px));pointer-events:none}
+.ntp{pointer-events:auto;display:flex;gap:10px;align-items:flex-start;text-align:left;width:100%;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:12px 14px;box-shadow:0 14px 34px rgba(10,20,50,.18);cursor:pointer;font:inherit;animation:ntin .35s cubic-bezier(.2,.8,.2,1)}
+.ntp.out{animation:ntout .3s ease forwards}.ntp .ni{width:34px;height:34px;border-radius:10px;background:var(--blue);color:#fff;display:grid;place-items:center;flex:none;font-size:16px}.ntp b{display:block;font-size:14px;line-height:1.35}.ntp p{margin:2px 0 0;font-size:13px;color:var(--mute);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.ntp small{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--red);font-weight:700;margin-top:3px}
+@keyframes ntin{from{opacity:0;transform:translateY(-12px) scale(.98)}to{opacity:1;transform:none}}@keyframes ntout{to{opacity:0;transform:translateX(30px)}}
 .bellw{position:relative}.bell{position:relative;width:44px;height:44px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);display:grid;place-items:center;cursor:pointer}.bell:hover{border-color:var(--blue)}
 .nbadge{min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:var(--red);color:#fff;font:800 11px/18px "Manrope",sans-serif;text-align:center}.bell .nbadge{position:absolute;top:-6px;right:-6px}.side .nbadge{margin-left:auto}
 .bellpop{position:absolute;right:0;top:calc(100% + 8px);width:min(400px,calc(100vw - 24px));max-height:min(560px,75vh);display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 18px 50px rgba(10,20,50,.18);z-index:70;overflow:hidden}
 .bphead{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:14px 16px;border-bottom:1px solid var(--line)}.bphead h3{margin:0;font-size:16px}
 .lnk{border:0;background:none;color:var(--blue);font:700 13px "Manrope",sans-serif;cursor:pointer;padding:6px;min-height:32px}.lnk:hover{text-decoration:underline}
 .bplist{overflow:auto;flex:1}.bpi{display:flex;gap:10px;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:none;padding:12px 16px;cursor:pointer;color:var(--ink);font:inherit}.bpi:hover{background:var(--blue2)}.bpi.un{background:light-dark(#f3f6ff,#17213f)}
-.bpi .dot{width:8px;height:8px;border-radius:50%;margin-top:7px;flex:none;background:transparent}.bpi.un .dot{background:var(--blue)}.bpi b{display:block;font-size:14px;line-height:1.35}.bpi p{margin:2px 0 0;font-size:13px;color:var(--mute);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.bpi small{font-size:11px;color:var(--mute)}
+.bpi .bpdot{width:8px;height:8px;border-radius:50%;margin-top:7px;flex:none;background:transparent}.bpi.un .bpdot{background:var(--blue)}.bpi b{display:block;font-size:14px;line-height:1.35}.bpi p{margin:2px 0 0;font-size:13px;color:var(--mute);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.bpi small{font-size:11px;color:var(--mute)}
 .bpempty{padding:28px 16px;text-align:center;color:var(--mute);font-size:14px}.bppush{border-top:1px solid var(--line);padding:12px 16px;display:grid;gap:8px}.bpbtns{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .vchat #todayBox{display:none!important}.av{display:inline-grid;place-items:center;border-radius:50%;flex:none;overflow:hidden;color:#fff;font-weight:800;background:var(--blue);line-height:1}.av img{width:100%;height:100%;object-fit:cover;display:block}
 .avset{display:flex;gap:14px;align-items:center;margin-bottom:16px}.avbig .av{width:72px;height:72px;font-size:26px}
@@ -547,7 +554,7 @@ dialog{max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px);overflow:aut
  <div class="mtop"><button class="mburger" id="navBtn" type="button" aria-label="Buka menu" aria-expanded="false"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><a class="logo" href="#beranda" aria-label="Ke beranda"><i>tr</i><span>te.threal</span></a><span class="mview" id="mView"></span></div><div class="navbg" id="navBg"></div>
  <aside class="side">
   <a class="logo" href="#beranda" title="Ke beranda" aria-label="Ke beranda" style="margin:4px 10px 10px"><i>tr</i><span>te.threal<small>content planner</small></span></a>
-  <div class="brand" style="margin-bottom:6px"><select id="wsSel" aria-label="Pilih workspace"></select></div>
+  <div class="brand wsw" id="wsWrap" style="margin-bottom:6px"><select id="wsSel" aria-label="Pilih workspace"></select><span class="wsdot" id="wsDot" hidden title="Ada notifikasi baru di workspace lain"></span></div>
   <div class="brand" style="display:flex;gap:6px;margin-bottom:6px"><select id="brandSel" aria-label="Pilih akun"></select><button class="chip" id="addBrand" aria-label="Tambah akun" title="Tambah akun" style="min-width:44px;min-height:44px">+</button></div>
   <span class="lbl">Menu utama</span>
   <button data-v="dashboard">Dashboard</button><button data-v="chat">Chat<b id="chatN" class="nbadge" hidden data-nt></b></button><button data-v="kalender">Kalender</button><button data-v="konten">Konten</button><button data-v="kanban">Kanban Board</button><button data-v="feed">Preview Feed</button><button data-v="idebank">Bank Ide</button><button data-v="template">Template</button><button data-v="poster">Poster Canva</button>
@@ -559,7 +566,7 @@ dialog{max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px);overflow:aut
   <div class="mhead"><div><h1 id="hello">Halo</h1><span class="note" id="todayLbl"></span></div>
    <div class="sp"><div class="chips" id="pfFilter"></div><button class="btn" id="newBtn">+ Konten Baru</button><div class="bellw"><button class="bell" id="bellBtn" type="button" aria-label="Notifikasi" aria-haspopup="true" aria-expanded="false" aria-controls="bellPop"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><b id="bellN" class="nbadge" hidden data-nt></b></button>
     <div class="bellpop" id="bellPop" hidden role="dialog" aria-label="Notifikasi"><div class="bphead"><h3>Notifikasi</h3><button class="lnk" id="bellAll" type="button">Tandai semua dibaca</button></div><div class="bplist" id="bellList" data-nt></div>
-     <div class="bppush"><span class="note" id="pushInfo" data-nt></span><div class="bpbtns"><button class="btn sm" id="pushOn" type="button">Aktifkan di perangkat ini</button><button class="btn ghost sm" id="pushTest" type="button" hidden>Kirim tes</button><button class="lnk" id="pushOff" type="button" hidden>Matikan di perangkat ini</button></div></div></div></div></div></div>
+     <div class="bppush"><label class="sndt"><input type="checkbox" id="sndOn"> <span>Bunyi notifikasi saat te.threal terbuka</span></label><span class="note" id="pushInfo" data-nt></span><div class="bpbtns"><button class="btn sm" id="pushOn" type="button">Aktifkan di perangkat ini</button><button class="btn ghost sm" id="pushTest" type="button" hidden>Kirim tes</button><button class="lnk" id="pushOff" type="button" hidden>Matikan di perangkat ini</button></div></div></div></div></div></div>
   <div class="panel" id="todayBox" hidden style="border-color:var(--red)"></div>
   <section id="v-dashboard">
    <div class="kpis" id="kpis"></div>
@@ -765,5 +772,6 @@ dialog{max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px);overflow:aut
  <h3 style="margin:6px 0 0;font-size:15px">Link aktif</h3><div id="apList" style="display:grid;gap:8px"></div></form></dialog>
 <div class="toast" id="toast"></div>
 <script src="app.js"></script>
+<div class="ntpops" id="ntPops" aria-live="polite"></div>
 </body>
 </html>
