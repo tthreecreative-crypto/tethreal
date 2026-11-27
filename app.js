@@ -168,7 +168,7 @@ let noGate=false;
 const seed=b=>{const t=[['Gimana cara tidur? ya tinggal merem','tt','script',1,'Hiburan'],['5 kesalahan saat bikin hook','ig','jadwal',0,'Edukasi'],['Behind the scene bikin konten','ig','take',2,'Behind the scene'],['Rekomendasi tools gratis','fb','jadwal',3,'Edukasi'],['Review jujur produk favorit','yt','edit',5,'Testimoni'],['Thread: cara riset konten 15 menit','th','ide',6,'Edukasi'],['Carousel tips caption','ig','pub',-2,'Edukasi'],['Sketsa lucu kerja dari rumah','tt','pub',-4,'Hiburan'],['Q&A mingguan','yt','pub',-6,'Edukasi'],['Poll: konten apa minggu depan?','x','pub',-1,'Hiburan'],['Day in my life','tt','jadwal',8,'Behind the scene'],['Contoh konten edukasi','ig','script',10,'Edukasi']];
  return t.map((r,i)=>({id:b+i,title:r[0],pf:r[1],st:r[2],date:addD(r[3]),time:['09:00','12:00','19:00','20:30'][i%4],pil:r[4],cap:''}))};
 const sampleState=()=>({order:['Akun Saya'],brands:{'Akun Saya':seed('s')},goals:{'Akun Saya':[{name:'Followers',pf:'ig',cur:1200,target:5000},{name:'Views bulan ini',pf:'tt',cur:48000,target:100000},{name:'Konten terbit bulan ini',pf:'ig',cur:4,target:20}]},sample:true,updated:0});
-const norm=d=>{const ig=d.integ&&typeof d.integ==='object'?d.integ:{};const o={order:[],brands:{},goals:{},sample:!!d.sample,updated:+d.updated||0,integ:{autoDrive:!!ig.autoDrive,autoCal:!!ig.autoCal,driveId:ig.driveId?String(ig.driveId):undefined,driveSaved:+ig.driveSaved||0,cal:ig.cal&&typeof ig.cal==='object'?Object.fromEntries(Object.entries(ig.cal).filter(([k,v])=>Array.isArray(v)&&v[0]).map(([k,v])=>[String(k),[String(v[0]),String(v[1]||'')]])):{}}};
+const norm=d=>{const ig=d.integ&&typeof d.integ==='object'?d.integ:{};const o={order:[],brands:{},goals:{},sample:!!d.sample,updated:+d.updated||0,integ:{autoDrive:!!ig.autoDrive,autoCal:!!ig.autoCal,driveId:ig.driveId?String(ig.driveId):undefined,upFolder:ig.upFolder?String(ig.upFolder):undefined,driveSaved:+ig.driveSaved||0,cal:ig.cal&&typeof ig.cal==='object'?Object.fromEntries(Object.entries(ig.cal).filter(([k,v])=>Array.isArray(v)&&v[0]).map(([k,v])=>[String(k),[String(v[0]),String(v[1]||'')]])):{}}};
  const ord=Array.isArray(d.order)?d.order:Object.keys(d.brands||{});
  ord.forEach(n=>{n=String(n).slice(0,40);if(!n||o.brands[n])return;o.order.push(n);
   o.brands[n]=(Array.isArray(d.brands?.[n])?d.brands[n]:[]).filter(p=>p&&typeof p==='object').map(p=>({id:String(p.id||'p'+Math.random().toString(36).slice(2)),title:String(p.title||'Tanpa judul').slice(0,120),...pfPair(p),st:stOf(p.st)[0],date:/^\d{4}-\d\d-\d\d$/.test(p.date)?p.date:T,time:/^\d\d:\d\d$/.test(p.time)?p.time:'19:00',pil:String(p.pil||'Edukasi').slice(0,40),cap:String(p.cap||'').slice(0,5000),acc:String(p.acc||'').trim().slice(0,60),fmt:['reels','poster','carousel'].includes(p.fmt)?p.fmt:'',ev:p.ev?String(p.ev):undefined,evSig:p.evSig?String(p.evSig):undefined,files:Array.isArray(p.files)?p.files.filter(f=>f&&f.id).slice(0,30).map(f=>({id:String(f.id).slice(0,120),name:String(f.name||'file').slice(0,200),size:+f.size||0,mime:String(f.mime||'').slice(0,100),link:/^https:\/\/drive\.google\.com\//.test(f.link)?String(f.link).slice(0,300):'',by:String(f.by||'').slice(0,80),byId:String(f.byId||'').slice(0,60),at:String(f.at||'').slice(0,40)})):[],url:/^https?:\/\/\S+$/i.test(p.url||'')?String(p.url).slice(0,400):'',perf:p.perf&&typeof p.perf==='object'?Object.fromEntries(['views','reach','likes','comments','shares','saves','follows'].filter(k=>p.perf[k]!=null&&isFinite(+p.perf[k])).map(k=>[k,Math.abs(+p.perf[k])])):undefined,perfAt:p.perfAt?String(p.perfAt).slice(0,40):undefined,perfShot:p.perfShot?String(p.perfShot).slice(0,120):undefined,appr:p.appr&&(p.appr.s==='ok'||p.appr.s==='rev')?{s:p.appr.s,note:String(p.appr.note||'').slice(0,1000),by:String(p.appr.by||'').slice(0,60),at:String(p.appr.at||'').slice(0,40)}:undefined}));
@@ -387,7 +387,7 @@ async function initGoogle(){gReady=!!sb;loadTok();
  renderG()}
 /* Access tokens last 1 hour; the server swaps the stored refresh token for a new one, no popup needed. */
 function getToken(){if(gOk())return Promise.resolve(gTok);if(gPending)return gPending;
- gPending=fnCall('token').then(j=>{gTok=j.access_token;gExp=Date.now()+(+j.expires_in||3600)*1000;saveTok();gLinked=true;return gTok})
+ gPending=fnCall('token').then(j=>{gTok=j.access_token;gExp=Date.now()+(+j.expires_in||3600)*1000;saveTok();gLinked=true;if(!tidied){tidied=true;setTimeout(tidyDrive,4000)}return gTok})
   .catch(e=>{if(e.error==='not_linked'||e.error==='revoked'){gLinked=false;INT().gLinked=false;dropTok();gMsg=e.error==='revoked'?'Akses Google dicabut atau kedaluwarsa. Klik "Hubungkan Google" lagi.':''}throw e})
   .finally(()=>{gPending=null;renderG()});return gPending}
 async function gfetch(url,opt={}){let t=await getToken();let r=await fetch(url,{...opt,headers:{...(opt.headers||{}),Authorization:'Bearer '+t}});
@@ -412,7 +412,7 @@ let drvBusy=false;
 async function driveSave(manual){if(drvBusy||!gLinked)return;drvBusy=true;const ic=INT();$('drvInfo').textContent='Menyimpan ke Drive…';
  try{const body=masterJSON();let done=false;
   if(ic.driveId){try{await gfetch(UPL+'/'+encodeURIComponent(ic.driveId)+'?uploadType=media',{method:'PATCH',headers:{'Content-Type':'application/json'},body});done=true}catch(e){if(e.status!==404)throw e}}
-  if(!done){const bd='plannerboundary'+Date.now();const mp=`--${bd}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify({name:'te-threal-planner-master.json',mimeType:'application/json'})}\r\n--${bd}\r\nContent-Type: application/json\r\n\r\n${body}\r\n--${bd}--`;
+  if(!done){let fold=null;try{fold=await ensureFolder()}catch(e){}const bd='plannerboundary'+Date.now();const mp=`--${bd}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify({name:'te-threal-planner-master.json',mimeType:'application/json',parents:fold?[fold]:undefined})}\r\n--${bd}\r\nContent-Type: application/json\r\n\r\n${body}\r\n--${bd}--`;
    const r=await gfetch(UPL+'?uploadType=multipart&fields=id',{method:'POST',headers:{'Content-Type':'multipart/related; boundary='+bd},body:mp});ic.driveId=(await r.json()).id}
   ic.driveSaved=Date.now();save(true);if(manual)toast('Master file tersimpan di Google Drive')}
  catch(e){drvBusy=false;$('drvInfo').textContent=gErr(e);return}drvBusy=false;renderG()}
@@ -742,10 +742,28 @@ function renderFiles(){const box=$('fFiles');if(!box)return;autoFmt();const n=dF
  +dFiles.map((f,i)=>`<div class="file"><span class="fn">${i+1}</span><span class="th" style="background-image:url('${esc(thumb(f))}')">${isImg(f)?'▣':'▶'}</span><div class="t"><a href="${esc(viewLink(f))}" target="_blank" rel="noopener" data-nt>${esc(f.name)}</a><small class="note" data-nt>${fmtSize(f.size)} · ${esc(f.by||'-')}</small></div><span class="mv">${n>1?`<button type="button" class="chip" data-mv="${i}:-1" aria-label="Geser ke atas" title="Geser ke atas"${i===0?' disabled':''}>↑</button><button type="button" class="chip" data-mv="${i}:1" aria-label="Geser ke bawah" title="Geser ke bawah"${i===n-1?' disabled':''}>↓</button>`:''}</span><a class="btn ghost sm" href="${esc(viewLink(f))}" target="_blank" rel="noopener">Buka</a><a class="btn ghost sm" href="${esc(dlLink(f))}" target="_blank" rel="noopener">Unduh</a><button type="button" class="chip" data-rmf="${i}" aria-label="Hapus file" title="Hapus file">×</button></div>`).join('');
  $('fSave').disabled=upBusy>0}
 function persistFiles(){if(editId){const post=findPost(editId);if(post){post.files=dFiles.map(x=>({...x}));save()}}renderFiles();render()}
-async function ensureFolder(){const ic=INT();
+var tidied=false;const FOLDER_NAME='te.threal',FOLDER_OLD=['te.threal planner – Uploads','te.threal planner - Uploads'];let fdrP=null;
+function ensureFolder(){if(!fdrP)fdrP=ensureFolder0().finally(()=>{fdrP=null});return fdrP}
+async function ensureFolder0(){const ic=INT();
  if(ic.upFolder){try{const r=await gfetch(DRV+'/'+encodeURIComponent(ic.upFolder)+'?fields=id,trashed');const j=await r.json();if(!j.trashed)return ic.upFolder}catch(e){if(e.status!==404)throw e}}
- const r=await gfetch(DRV+'?fields=id',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'te.threal planner – Uploads',mimeType:'application/vnd.google-apps.folder'})});
- ic.upFolder=(await r.json()).id;save(true);return ic.upFolder}
+ const names=[FOLDER_NAME,...FOLDER_OLD].map(n=>`name='${n.replace(/'/g,"\\'")}'`).join(' or ');
+ const q=encodeURIComponent(`mimeType='application/vnd.google-apps.folder' and trashed=false and (${names})`);
+ let list=[];try{const r=await gfetch(`${DRV}?q=${q}&orderBy=createdTime&fields=files(id,name)&pageSize=100`);list=(await r.json()).files||[]}catch(e){}
+ let id;
+ if(list.length){id=list[0].id;if(list[0].name!==FOLDER_NAME){try{await gfetch(DRV+'/'+encodeURIComponent(id),{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:FOLDER_NAME})})}catch(e){}}
+  if(list.length>1)mergeFolders(id,list.slice(1).map(f=>f.id))}
+ else{const r=await gfetch(DRV+'?fields=id',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:FOLDER_NAME,mimeType:'application/vnd.google-apps.folder'})});id=(await r.json()).id}
+ ic.upFolder=id;save(true);return id}
+async function moveInto(fileId,folder){const r=await gfetch(DRV+'/'+encodeURIComponent(fileId)+'?fields=parents');const par=((await r.json()).parents||[]).filter(x=>x!==folder);
+ await gfetch(DRV+'/'+encodeURIComponent(fileId)+'?addParents='+encodeURIComponent(folder)+(par.length?'&removeParents='+encodeURIComponent(par.join(',')):'')+'&fields=id',{method:'PATCH',headers:{'Content-Type':'application/json'},body:'{}'})}
+async function mergeFolders(main,others){let moved=0;
+ for(const fid of others){try{let tok='',left=false;
+  do{const q=encodeURIComponent(`'${fid}' in parents and trashed=false`);const r=await gfetch(`${DRV}?q=${q}&fields=nextPageToken,files(id)&pageSize=200${tok?'&pageToken='+tok:''}`);const j=await r.json();
+   for(const f of j.files||[]){try{await gfetch(DRV+'/'+encodeURIComponent(f.id)+'?addParents='+encodeURIComponent(main)+'&removeParents='+encodeURIComponent(fid)+'&fields=id',{method:'PATCH',headers:{'Content-Type':'application/json'},body:'{}'});moved++}catch(e){left=true}}
+   tok=j.nextPageToken||''}while(tok);
+  if(!left)await trashDrive(fid)}catch(e){}}
+ if(others.length)toast(`Folder Google Drive dirapikan: ${others.length} folder digabung jadi 1 folder “${FOLDER_NAME}”`)}
+async function tidyDrive(){if(!gLinked)return;try{const id=await ensureFolder();const ic=INT();if(ic.driveId){try{await moveInto(ic.driveId,id)}catch(e){}}}catch(e){}}
 async function uploadFile(file,onProg){const folder=await ensureFolder();
  const init=await gfetch(UPL+'?uploadType=resumable&fields=id,name,size,mimeType,webViewLink',{method:'POST',headers:{'Content-Type':'application/json; charset=UTF-8','X-Upload-Content-Type':file.type||'application/octet-stream','X-Upload-Content-Length':String(file.size)},body:JSON.stringify({name:file.name,parents:[folder],description:'Diunggah dari te.threal planner'})});
  const loc=init&&init.headers.get('Location');if(!loc)throw {error:'http',status:0,message:'upload URL missing'};
