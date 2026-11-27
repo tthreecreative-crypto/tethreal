@@ -1,7 +1,7 @@
 {
   "name": "te.threal",
   "short_name": "te.threal",
-  "description": "Content planner untuk tim sosial media: kalender, konten, report, dan poster.",
+  "description": "Content planner untuk tim sosial media: kalender, konten, chat, report, poster, dan receipt & report iklan.",
   "id": "/",
   "start_url": "/#dashboard",
   "scope": "/",
